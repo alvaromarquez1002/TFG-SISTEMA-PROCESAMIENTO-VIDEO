@@ -1,3 +1,29 @@
+# LaTeX temporary files inside /doc
+doc/*.aux
+doc/*.log
+doc/*.out
+doc/*.synctex.gz
+doc/*.bbl
+doc/*.blg
+doc/*.toc
+doc/*.lof
+doc/*.lot
+doc/_minted*
+doc/*.fls
+doc/*.fdb_latexmk
+
+# Optional: Ignore generated PDF in /doc
+# doc/*.pdf
+
+# Python cache/build files inside /src (and elsewhere)
+**/__pycache__/
+**/*.pyc
+*.egg-info/
+
+# Other common ignores
+.idea/
+.vscode/
+*.DS_Store
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
