@@ -1,6 +1,44 @@
 \capitulo{4}{Técnicas y herramientas}
 
-Esta parte de la memoria tiene como objetivo presentar las técnicas metodológicas y las herramientas de desarrollo que se han utilizado para llevar a cabo el proyecto. Si se han estudiado diferentes alternativas de metodologías, herramientas, bibliotecas se puede hacer un resumen de los aspectos más destacados de cada alternativa, incluyendo comparativas entre las distintas opciones y una justificación de las elecciones realizadas. 
-No se pretende que este apartado se convierta en un capítulo de un libro dedicado a cada una de las alternativas, sino comentar los aspectos más destacados de cada opción, con un repaso somero a los fundamentos esenciales y referencias bibliográficas para que el lector pueda ampliar su conocimiento sobre el tema.
+\subsection{Metodología de Desarrollo}
 
+Para organizar y gestionar el trabajo de este TFG de una manera flexible y adaptativa, se ha decidido emplear un enfoque ágil.
 
+Las ideas principales de esta forma de trabajo aplicada al TFG son:
+
+\begin{itemize}
+    \item \textbf{Organización en Sprints:} El trabajo total se divide en periodos de tiempo, los Sprints. En cada Sprint, el objetivo es completar un conjunto concreto de tareas previamente seleccionadas.
+    
+    \item \textbf{Uso de Jira para la Gestión:} Se utiliza la herramienta de software \textbf{Jira} como soporte principal para la gestión del proyecto. En Jira creo:
+        \begin{itemize}
+            \item Una lista general de tareas pendientes (Backlog).
+            \item La planificación de qué tareas se abordarán en cada Sprint.
+            \item Un tablero visual para seguir el estado de las tareas del Sprint actual (si están Por Hacer, En Curso o ya Hechas).
+            \item Se usan también Épicas para agrupar fases grandes del proyecto (como la investigación inicial, el desarrollo de componentes, la escritura de la documentación, etc.).
+        \end{itemize}
+    
+    \item \textbf{Seguimiento y Adaptación:} Se mantienen reuniones periódicas (normalmente semanales) con los tutores para revisar el trabajo realizado en el Sprint, comentar los avances, resolver dudas o problemas...
+\end{itemize}
+
+Este enfoque ágil resulta beneficioso, ya que permite adaptarse mejor a los resultados de la investigación o a los desafíos técnicos que puedan surgir, a la vez que facilita un seguimiento continuo del progreso hacia los objetivos finales.
+
+\subsubsection{Apache Kafka}
+
+Apache Kafka es una plataforma distribuida de código abierto, ampliamente reconocida en la industria, diseñada específicamente para la gestión y procesamiento de flujos de eventos en tiempo real. Funciona como un sistema de mensajería publicar-suscribir de alto rendimiento, que garantiza durabilidad y tolerancia a fallos.
+
+% Rol en este TFG
+En el marco de este proyecto, Apache Kafka se perfila como una pieza central de la arquitectura. Su rol principal será actuar como el sistema intermediario encargado de recibir de forma eficiente los flujos de datos generados por la fuente de vídeo (Jitsi/Jibri) y almacenarlos temporalmente de manera fiable para que sean consumidos posteriormente por el motor de procesamiento (Apache Spark). Esto aportando flexibilidad y robustez al conjunto.
+
+% Justificación / Por qué Kafka
+La elección de Kafka se fundamenta en:
+\begin{itemize}
+    \item \textbf{Manejo de Alto Volumen y Baja Latencia:} Kafka está optimizado para ingestar y servir grandes cantidades de datos (como los que puede generar el vídeo) con un retardo mínimo.
+    \item \textbf{Escalabilidad Nativa:} El sistema permite escalar la capacidad de Kafka para adaptarse a la carga de trabajo.
+    \item \textbf{Fiabilidad:} Su naturaleza distribuida y la duplicación de datos proporcionan tolerancia a fallos.
+\end{itemize}
+
+% Zookeeper / KRaft
+Es relevante mencionar que Kafka requiere de Apache Zookeeper para tareas de coordinación y gestión de metadatos. Aunque esta dependencia está siendo eliminada en las versiones más recientes mediante el protocolo KRaft (que simplifica la infraestructura), es un factor a tener en cuenta según la versión que finalmente se despliegue en el proyecto.
+
+% Consideraciones y Alternativas
+Una consideración técnica es que Kafka no está optimizado para manejar archivos de vídeo extremadamente grandes como mensajes únicos; se deben considerar estrategias como el envío de metadatos. Kafka es una opción preferente para este proyecto.
