@@ -17,4 +17,4 @@ COPY . .
 # 5. Comando por Defecto: Qué comando se ejecutará cuando inicie un contenedor 
 #    basado en esta imagen. Para empezar y probar, simplemente mostraremos 
 #    la versión de Python instalada dentro del contenedor.
-CMD ["python", "--version"] 
+CMD ["python", "./main.py"]
