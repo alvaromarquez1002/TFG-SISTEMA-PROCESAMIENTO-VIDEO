@@ -1,0 +1,7 @@
+# src/docker-compose.yml
+services:
+  python-processor: 
+    build:
+      context: ./process 
+      dockerfile: ../dockers/python_processor/Dockerfile
+    container_name: tfg_python_processor 
