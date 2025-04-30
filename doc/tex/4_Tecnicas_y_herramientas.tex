@@ -24,7 +24,7 @@ Este enfoque ágil resulta beneficioso, ya que permite adaptarse mejor a los res
 
 \subsubsection{Apache Kafka}
 
-Apache Kafka es una plataforma distribuida de código abierto, ampliamente reconocida en la industria, diseñada específicamente para la gestión y procesamiento de flujos de eventos en tiempo real. Funciona como un sistema de mensajería publicar-suscribir de alto rendimiento, que garantiza durabilidad y tolerancia a fallos.
+Apache Kafka \cite{KafkaWebDoc} es una plataforma distribuida de código abierto, ampliamente reconocida en la industria, diseñada específicamente para la gestión y procesamiento de flujos de eventos en tiempo real. Funciona como un sistema de mensajería publicar-suscribir de alto rendimiento, que garantiza durabilidad y tolerancia a fallos.
 
 % Rol en este TFG
 En el marco de este proyecto, Apache Kafka se perfila como una pieza central de la arquitectura. Su rol principal será actuar como el sistema intermediario encargado de recibir de forma eficiente los flujos de datos generados por la fuente de vídeo (Jitsi/Jibri) y almacenarlos temporalmente de manera fiable para que sean consumidos posteriormente por el motor de procesamiento (Apache Spark). Esto aportando flexibilidad y robustez al conjunto.
@@ -42,3 +42,35 @@ Es relevante mencionar que Kafka requiere de Apache Zookeeper para tareas de coo
 
 % Consideraciones y Alternativas
 Una consideración técnica es que Kafka no está optimizado para manejar archivos de vídeo extremadamente grandes como mensajes únicos; se deben considerar estrategias como el envío de metadatos. Kafka es una opción preferente para este proyecto.
+
+\subsubsection{Apache Spark}
+
+Para realizar el procesamiento y análisis de los datos de vídeo (ya sean los flujos recibidos a través de Kafka o los archivos MP4 grabados), la herramienta principal que he seleccionado es \textbf{Apache Spark} \cite{SparkWebDoc}. Se trata de un motor de análisis unificado y muy potente, diseñado para procesar grandes volúmenes de datos de forma distribuida y eficiente.
+
+La razón principal para elegir Spark en este TFG es su capacidad para manejar tanto el procesamiento por lotes (batch) como el procesamiento en tiempo real (streaming) utilizando una misma plataforma y APIs consistentes, especialmente a través de su interfaz para Python (\textit{PySpark}). Esto me da flexibilidad para implementar tanto el flujo offline como un posible flujo en tiempo real.
+
+Además, considero que Spark es adecuado por:
+\begin{itemize}
+    \item Su buena integración con el ecosistema Big Data, incluyendo una conexión nativa y robusta con Apache Kafka, así como con sistemas de almacenamiento como HDFS o almacenes compatibles con S3 (útil para leer los MP4s grabados).
+    \item Sus librerías incorporadas, como \textit{Spark SQL} (que podría usar para analizar metadatos o características extraídas de los vídeos) y MLlib (su librería de Machine Learning).
+    \item La disponibilidad de una API en Python (PySpark), que facilita su uso dado que el resto del desarrollo probablemente se realizará en este lenguaje.
+\end{itemize}
+
+Soy consciente de que el procesamiento de vídeo puede ser intensivo en recursos, especialmente en memoria, por lo que la configuración y optimización del clúster será un aspecto importante a tener en cuenta durante la implementación.
+
+\subsubsection{Jitsi / Jibri}
+
+
+Para la captura del vídeo de las sesiones de rehabilitación, que es la fuente de datos principal de este proyecto, he decidido basarme en la plataforma de videoconferencia de código abierto \textbf{Jitsi} \cite{JitsiJibriDocs}. Jitsi es un conjunto de herramientas que permiten crear sistemas de videoconferencia seguros y escalables. Sus componentes principales son Jitsi Meet (la aplicación web/móvil para los usuarios) y Jitsi Videobridge (el servidor que gestiona los flujos de vídeo).
+
+Dentro del ecosistema Jitsi, el componente clave para mi TFG es \textbf{Jibri} (Jitsi Broadcasting Infrastructure). Jibri es una herramienta diseñada específicamente para grabar o transmitir una conferencia completa de Jitsi Meet.
+
+El rol de Jibri en mi proyecto es fundamental: será el encargado de generar los datos de vídeo brutos que posteriormente procesará Spark. Según el enfoque que siga (offline o tiempo real), utilizaré Jibri para:
+\begin{itemize}
+    \item \textbf{Grabar las sesiones} de ejercicios en archivos de vídeo estándar (formato MP4). Esta es la opción inicial más recomendada.
+    \item O bien transmitir la sesión en tiempo real usando el protocolo RTMP, lo que requeriría una integración más compleja con Kafka o un intermediario.
+\end{itemize}
+
+La elección de Jitsi/Jibri se basa en que es una solución \textbf{completa, de código abierto y gratuita}, que me proporciona directamente la funcionalidad de captura y grabación/streaming de vídeo necesaria como punto de partida para mi pipeline de procesamiento.
+
+No obstante, soy consciente de algunas consideraciones importantes al usar Jibri: requiere una máquina (o máquina virtual) dedicada con recursos suficientes (CPU, RAM), y una única instancia de Jibri solo puede gestionar una grabación o transmisión a la vez, lo que implica pensar en la escalabilidad si se necesitaran muchas sesiones concurrentes.
