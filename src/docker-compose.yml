@@ -1,7 +1,48 @@
 # src/docker-compose.yml
+
 services:
-  python-processor: 
+  # ---servicio Python---
+  python-processor:
     build:
-      context: ./process 
+      context: ./process
       dockerfile: ../dockers/python_processor/Dockerfile
-    container_name: tfg_python_processor 
+    container_name: tfg_python_processor
+
+  # ---Servicio Zookeeper ---
+  zookeeper:
+    # Imagen oficial de Confluent para Zookeeper
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: tfg_zookeeper
+    # el puerto estándar de Zookeeper (2181)
+    ports:
+      - "2181:2181"
+    # Variables de entorno básicas
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  # ---Servicio Kafka ---
+  kafka:
+    # Imagen oficial de Confluent para Kafka
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: tfg_kafka
+    # Kafka depende de que Zookeeper esté iniciado primero
+    depends_on:
+      - zookeeper
+    #el puerto estándar de Kafka (9092) para conectar desde tu máquina
+    ports:
+      - "9092:9092"
+    # Variables de entorno para configurar Kafka
+    environment:
+      # ID único del broker Kafka
+      KAFKA_BROKER_ID: 1
+      # Dónde encontrar Zookeeper (usamos el nombre del servicio 'zookeeper')
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      # clientes desde fuera de Docker conectarán a localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # Factor de replicación para topics internos (necesario para nodo único)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # Para agilizar el arranque 
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
