@@ -1,3 +1,7 @@
 \capitulo{1}{Introducción}
 
-Descripción del contenido del trabajo y del estructura de la memoria y del resto de materiales entregados.
+La enfermedad de Parkinson es un trastorno neurodegenerativo que afecta a millones de personas, y cuya rehabilitación es clave para mantener la calidad de vida de los pacientes. La telerehabilitación, que permite realizar terapias desde casa, es una solución cada vez más necesaria para superar las dificultades de desplazamiento y la saturación de los servicios sanitarios. Este Trabajo de Fin de Grado se integra en esta línea de investigación, colaborando con un proyecto marco del Hospital Universitario de Burgos para mejorar las terapias a distancia.
+
+El proyecto parte de un sistema previo, \textit{FIS-FBIS}, que ya permitía un análisis básico de los ejercicios. Sin embargo, su infraestructura tecnológica presentaba limitaciones de escalabilidad y fiabilidad. El objetivo principal de este TFG es, por tanto, rediseñar y construir un backend mucho más robusto, capaz de procesar múltiples flujos de vídeo de forma eficiente y estable, sentando las bases para un sistema de feedback automático fiable.
+
+Para conseguirlo, he diseñado e implementado una nueva arquitectura basada en tecnologías de procesamiento de datos. La solución utiliza \textbf{Jitsi/Jibri} para la captura de las sesiones de vídeo, \textbf{Apache Kafka} como canal de comunicación para transmitir los datos de forma fiable, y \textbf{Apache Spark} para el procesamiento y análisis de los mismos. Toda esta infraestructura está orquestada mediante contenedores \textbf{Docker}, lo que facilita enormemente su despliegue, gestión y replicabilidad.
