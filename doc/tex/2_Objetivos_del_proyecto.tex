@@ -1,3 +1,42 @@
 \capitulo{2}{Objetivos del proyecto}
 
-Este apartado explica de forma precisa y concisa cuales son los objetivos que se persiguen con la realización del proyecto. Se puede distinguir entre los objetivos marcados por los requisitos del software a construir y los objetivos de carácter técnico que plantea a la hora de llevar a la práctica el proyecto.
+En este capítulo se definen las metas y los objetivos que se han perseguido a lo largo del desarrollo de este Trabajo de Fin de Grado. Estos se han dividido en objetivos generales, que describen el propósito principal del proyecto, y objetivos técnicos, que detallan las metas específicas a nivel de implementación y tecnología. Finalmente, se incluye una sección con los objetivos personales que me he marcado con la realización de este trabajo.
+
+\section{Objetivos generales}
+
+El objetivo principal de este proyecto es el \textbf{diseño y la implementación de una infraestructura de backend para un sistema de procesamiento de vídeo destinado a la telerehabilitación de pacientes con Párkinson}.
+
+Este objetivo general se fundamenta en la necesidad de evolucionar un sistema preexistente, asegurando que la nueva arquitectura pueda manejar de forma fiable la captura, el transporte y el almacenamiento de los flujos de datos de vídeo, sentando así las bases para futuras implementaciones de algoritmos de análisis y feedback automático.
+
+\section{Objetivos técnicos}
+
+Para alcanzar el objetivo general, se establecieron las siguientes metas técnicas específicas:
+
+\begin{itemize}
+    \item Investigar y seleccionar un conjunto de tecnologías de código abierto adecuadas para construir un pipeline de datos en streaming, centrándose en sus licencias.
+    
+    \item Desplegar y configurar un sistema de captura de vídeo basado en \textbf{Jitsi}, utilizando su componente \textbf{Jibri} para la grabación de las sesiones de ejercicios en formato de archivo (MP4).
+    
+    \item Implementar \textbf{Apache Kafka} como un bus de mensajería distribuido para desacoplar los componentes del sistema y garantizar un transporte de datos fiable.
+    
+    \item Integrar \textbf{Apache Spark} en la arquitectura como motor de procesamiento, preparando el sistema para el futuro análisis de los datos de vídeo almacenados o en streaming.
+    
+    \item Contenerizar toda la infraestructura utilizando \textbf{Docker} y \textbf{Docker Compose}, con el fin de crear un entorno de despliegue consistente, reproducible y fácil de gestionar.
+    
+    \item Documentar de manera exhaustiva todo el proceso de investigación, diseño, implementación y los desafíos técnicos encontrados, utilizando \LaTeX{} a través de la plataforma Overleaf.
+    
+    \item Utilizar herramientas modernas de gestión de proyectos (\textbf{Jira}) y control de versiones (\textbf{Git/GitHub}) para llevar un seguimiento riguroso del trabajo realizado y asegurar la integridad del código fuente y la documentación.
+    
+\end{itemize}
+
+
+\section{Objetivos personales}
+
+Más allá de los requisitos técnicos, la realización de este TFG me ha permitido perseguir una serie de objetivos personales y de desarrollo profesional:
+
+\begin{itemize}
+    \item Aplicar los conocimientos teóricos adquiridos a un problema de ingeniería complejo y real.
+    \item Profundizar y ganar experiencia práctica en tecnologías de alta demanda en la industria, como son las plataformas(Kafka, Spark) y las herramientas (Docker).
+    \item Afrontar y resolver problemas técnicos, desarrollando la capacidad de análisis, depuración y toma de decisiones ante imprevistos, como los surgidos durante el despliegue de la infraestructura.
+    \item Contribuir, aunque sea a nivel de infraestructura, a un proyecto con un impacto social positivo y relevante.
+\end{itemize}
