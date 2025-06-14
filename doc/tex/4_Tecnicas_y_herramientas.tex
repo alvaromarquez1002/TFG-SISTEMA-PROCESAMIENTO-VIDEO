@@ -74,3 +74,18 @@ El rol de Jibri en mi proyecto es fundamental: será el encargado de generar los
 La elección de Jitsi/Jibri se basa en que es una solución \textbf{completa, de código abierto y gratuita}, que me proporciona directamente la funcionalidad de captura y grabación/streaming de vídeo necesaria como punto de partida para mi pipeline de procesamiento.
 
 No obstante, soy consciente de algunas consideraciones importantes al usar Jibri: requiere una máquina (o máquina virtual) dedicada con recursos suficientes (CPU, RAM), y una única instancia de Jibri solo puede gestionar una grabación o transmisión a la vez, lo que implica pensar en la escalabilidad si se necesitaran muchas sesiones concurrentes.
+
+
+\subsection{Contenerización con Docker y Docker Compose}
+
+Para asegurar un entorno de desarrollo y despliegue consistente, portable y aislado, se ha utilizado \textbf{Docker}, una plataforma de contenerización de código abierto \cite{docker_docs}. Su función principal es empaquetar una aplicación y todas sus dependencias (librerías, configuraciones, etc.) en una unidad aislada y portable llamada contenedor. Gracias a esto, se elimina el clásico problema de "en mi máquina funciona", garantizando la consistencia y reproducibilidad del entorno.
+
+Mientras que Docker gestiona contenedores individuales, un sistema como el de este TFG requiere que múltiples contenedores (uno para Kafka, otro para Zookeeper, otro para la aplicación Python) se comuniquen y funcionen de manera orquestada. Para esta tarea se ha empleado \textbf{Docker Compose}, una herramienta que permite definir y gestionar aplicaciones multi-contenedor a través de un único archivo declarativo en formato YAML \cite{docker_docs}. El uso de Docker Compose en este proyecto ha sido clave para automatizar el despliegue del sistema completo, manejando la creación de redes, el orden de arranque de los servicios y su configuración con un solo comando.
+
+La implementación se basa en dos ficheros principales:
+\begin{description}
+    \item[\texttt{Dockerfile:}] Actúa como un plano para construir la imagen personalizada de la aplicación de procesamiento en Python. Define una imagen base ligera, copia el código fuente y las dependencias (\texttt{requirements.txt}), y especifica el comando para ejecutar la aplicación. Esto asegura que el entorno de ejecución del código sea siempre el mismo.
+    \item[\texttt{docker-compose.yml:}] Es el fichero de orquestación. En él se definen los tres servicios del sistema: \texttt{zookeeper}, \texttt{kafka} y el servicio \texttt{python-processor} (basado en el Dockerfile anterior). Para Kafka y Zookeeper se utilizan imágenes públicas \cite{confluent_docker}, lo que ahorra un tiempo de configuración considerable. Este fichero también define la red virtual a través de la cual se comunican los contenedores y establece las dependencias de arranque (por ejemplo, que Kafka no inicie hasta que Zookeeper esté listo) mediante la directiva \texttt{depends\_on}.
+\end{description}
+
+En
