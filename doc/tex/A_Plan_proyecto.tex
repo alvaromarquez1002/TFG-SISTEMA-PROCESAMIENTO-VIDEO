@@ -1,13 +1,176 @@
 \apendice{Plan de Proyecto Software}
+\label{apendice:plan_proyecto}
 
 \section{Introducción}
+\label{sec:plan_intro}
 
-\section{Planificación temporal}
+La planificación de un proyecto es una fase fundamental para su correcto desarrollo. En este apartado se comentará, por una parte, la planificación temporal del proyecto mediante los distintos \textit{sprints} que se han llevado a cabo, y por otra parte, se realizará un breve estudio sobre la viabilidad del proyecto.
+
+En este proyecto se ha utilizado una metodología ágil basada en los principios de \textit{Scrum}, que tiene como objetivo base la creación de diferentes iteraciones o \textbf{sprints} \cite{trigas2012metodologia}. Para una correcta planificación, se optó por agrupar el trabajo en Épicas que contienen Sprints con objetivos temáticos, gestionando todas las tareas a través de un tablero en la plataforma \textbf{Jira}. Aunque las reuniones con los tutores eran periódicas para comentar dudas y avances, la estructura en sprints permitió un desarrollo iterativo y organizado.
+
+%----------------------------------------------------------------------
+\section{Planificación Temporal}
+\label{sec:plan_temporal}
+El desarrollo del proyecto se ha estructurado en Épicas que agrupan distintos sprints, permitiendo un seguimiento claro de los grandes hitos del proyecto. A continuación, se detallan las fases y las tareas más relevantes de cada una.
+
+% --- EPIC 1 ---
+\subsection{Épica 1: Investigación, Configuración y Desarrollo Inicial (Febrero 2025 - Abril 2025)}
+\label{epic:1}
+Esta primera épica abarcó desde el inicio del proyecto hasta la pausa de Semana Santa. El objetivo era establecer las bases teóricas y técnicas del TFG, asegurando que se contaba con el conocimiento y las herramientas adecuadas para comenzar el desarrollo.
+
+\subsubsection{Sprint 1: Investigación y Configuración de Herramientas}
+Este sprint inicial fue de carácter exploratorio y de configuración. El objetivo era comprender en profundidad la arquitectura de un pipeline de procesamiento de vídeo y seleccionar las herramientas más adecuadas. Se realizó una investigación exhaustiva de las tecnologías clave, se preparó el entorno de control de versiones y se configuraron las herramientas de gestión y documentación.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{0.7\textwidth}|c|c|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Tareas (Jira ID)} & \textbf{Est.} & \textbf{Final} \\ \hline
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Investigar y seleccionar una plantilla \LaTeX{} para la UBU (TFGVID-2) & 2h & 2h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Configurar repositorio GitHub con estructura inicial (doc/ y src/) (TFGVID-3) & 2h & 3h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Configurar Overleaf y vincular con GitHub (si es posible) (TFGVID-4) & 2h & 2h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Leer documentación Apache Kafka (TFGVID-8) & 16h & 20h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Leer documentación Apache Spark Streaming (TFGVID-9) & 20h & 18h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Leer documentación Jibri (output/streaming) (TFGVID-10) & 16h & 18h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Investigar alternativas a Kafka para Jibri -> Spark (TFGVID-11) & 10h & 14h \\
+        \hline
+    \end{tabular}
+    \caption{Tareas principales del Sprint 1.}
+    \label{tab:sprint1}
+\end{table}
+
+La mayor dificultad durante este sprint fue asimilar la gran cantidad de información sobre el ecosistema de tecnologías distribuidas. Entender cómo interactúan entre sí Kafka, Zookeeper, Spark y Jitsi, así como sus complejas configuraciones, requirió un esfuerzo considerable de lectura y análisis de documentación técnica para poder tomar decisiones informadas sobre la arquitectura del proyecto.
+
+\subsubsection{Sprint 2: Prototipado del Pipeline Base en Docker}
+Con las herramientas ya investigadas, el objetivo de este sprint fue crear un primer prototipo funcional de la infraestructura, validando la comunicación entre los componentes principales. Este sprint se centró en la contenerización de la aplicación y sus dependencias.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{0.7\textwidth}|c|c|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Tareas (Jira ID)} & \textbf{Est.} & \textbf{Final} \\ \hline
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Crear Dockerfile básico para código Python (TFGVID-21) & 8h & 6h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Construir y probar imagen Docker para script Python (TFGVID-22) & 16h & 18h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Añadir Zookeeper a docker-compose.yml (TFGVID-27) & 8h & 10h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Añadir Kafka a docker-compose.yml (TFGVID-28) & 4h & 7h \\
+        \hline
+    \end{tabular}
+    \caption{Tareas principales del Sprint 2.}
+    \label{tab:sprint2}
+\end{table}
+
+El principal desafío técnico fue la depuración de los primeros ficheros \texttt{Dockerfile} y \texttt{docker-compose.yml}. Surgieron problemas relacionados con el contexto de construcción de las imágenes y la configuración de la red virtual de Docker para permitir que el contenedor Python se comunicase con el broker de Kafka. Tras varias iteraciones y ajustes en la configuración de los servicios, se consiguió un despliegue local exitoso de la pila Kafka-Zookeeper-Python.
+
+
+\subsection{Épica 2: Despliegue, Depuración y Pivote de Infraestructura (Abril 2025 - Junio 2025)}
+\label{epic:2}
+Esta segunda épica se centró en el despliegue del componente más complejo, Jitsi, y la resolución de los problemas de infraestructura que surgieron, lo que llevó a una decisión estratégica clave en el proyecto.
+
+\subsubsection{Sprint 3: Despliegue y Depuración de Jitsi en WSL2}
+El objetivo fue desplegar una instancia completa de \texttt{docker-jitsi-meet} con Jibri en Windows/WSL2. Esta fase se convirtió en un ciclo de depuración intensivo. Los principales obstáculos fueron los errores de permisos de escritura del contenedor de Prosody en los volúmenes montados desde Windows y los fallos de autenticación de Jibri. Adicionalmente, se realizó un intento de implementar una configuración con HTTPS y certificados autofirmados que resultó infructuoso debido a problemas irresolubles con el montaje de los certificados en el contenedor web (Nginx), lo que bloqueó completamente el progreso.
+
+\subsubsection{Sprint 4: Pivote de Infraestructura y Estabilización}
+Ante el bloqueo técnico, en este sprint se tomó la decisión estratégica de migrar el entorno de desarrollo a un sistema operativo Linux nativo para eliminar los problemas de compatibilidad. Se instaló Debian 12 en una nueva partición, configurando un sistema de arranque dual. Sobre este nuevo entorno, se reinstaló y configuró Docker, Docker Compose y, finalmente, se desplegó con éxito la pila de Jitsi (revirtiendo a una configuración HTTP) y la aplicación del TFG.
+
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|p{0.8\textwidth}|c|c|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Tareas de los Sprints 3 y 4 (Jira ID)} & \textbf{Est.} & \textbf{Final} \\ \hline
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Desplegar Jitsi básico con Docker (local) (TFGVID-13) & 20h & 30h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: (Cancelada) Implementar HTTPS en Jitsi local & 6h & 6h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Instalar y configurar Docker y Docker Compose en Debian (TFGVID-26) & 20h & 24h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Configurar data-root de Docker para gestión de disco & 8h & 7h \\
+        \rowcolor[HTML]{ECF4FF} 
+        TASK: Solucionar error de montaje del contenedor web de Jitsi & 8h & 8h \\
+        \rowcolor[HTML]{EFEFEF} 
+        TASK: Revertir configuración de Jitsi a HTTP y lograr conexión estable & - & - \\
+        \hline
+    \end{tabular}
+    }
+    \caption{Tareas principales de los Sprints 3 y 4.}
+    \label{tab:sprint3_4}
+\end{table}
+
+La mayor dificultad de esta fase no fue tanto la configuración de las aplicaciones en sí, que resultó mucho más fluida en Linux, sino el propio proceso de particionado, instalación de un nuevo sistema operativo y la correcta configuración del gestor de arranque GRUB para el arranque dual.
+
+\subsection{Épica 3: Finalización del Proyecto (Junio 2025 en adelante)}
+\label{epic:3}
+Esta épica final engloba todas las tareas restantes para la conclusión del proyecto, divididas en una fase final de implementación técnica y una fase de documentación y entrega.
+
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|p{0.7\textwidth}|c|c|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Fase} & \textbf{Tareas} & \textbf{Est.} & \textbf{Final} \\ \hline
+        \rowcolor[HTML]{ECF4FF} 
+        \multirow{6}{*}{\parbox{2cm}{\textbf{Fase 1: Implementación Técnica}}} & TASK: Preparar entorno limpio para el despliegue de Jitsi & 20h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Estabilizar el despliegue de Jitsi en HTTP & 24h & ? \\
+        \rowcolor[HTML]{ECF4FF} 
+         & TASK: Validar la grabación de vídeo con Jibri & 16h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Configurar el entorno de procesamiento con Spark & 18h & ? \\
+        \rowcolor[HTML]{ECF4FF} 
+         & TASK: Desarrollar el script de procesamiento de vídeo (Prueba de Concepto) & 8h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Integrar y probar el pipeline completo (Jitsi -> Spark) & 20h & ? \\ \hline
+        \rowcolor[HTML]{ECF4FF} 
+        \multirow{7}{*}{\parbox{2cm}{\textbf{Fase 2: Documentación y Entrega}}} & TASK: Documentar el despliegue y la depuración de Jitsi & 6h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Documentar la implementación del pipeline de Spark & 6h & ? \\
+        \rowcolor[HTML]{ECF4FF} 
+         & TASK: Finalizar el diseño de la arquitectura y el diagrama de flujo & 8h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Redactar la versión final del Manual de Usuario & 6h & ? \\
+        \rowcolor[HTML]{ECF4FF} 
+         & TASK: Escribir las conclusiones y realizar la revisión final & 6h & ? \\
+        \rowcolor[HTML]{EFEFEF} 
+         & TASK: Preparar el repositorio de GitHub para la entrega & 2h & ? \\
+        \rowcolor[HTML]{ECF4FF}
+         & TASK: Realizar Anexo de Sostenibilidad Curricular & 4h & ? \\
+        \hline
+    \end{tabular}
+    }
+    \caption{Tareas del Epic 3: Finalización del Proyecto.}
+    \label{tab:epic3}
+\end{table}
 
 \section{Estudio de viabilidad}
-
-\subsection{Viabilidad económica}
+\label{sec:plan_viabilidad}
 
 \subsection{Viabilidad legal}
+\label{subsec:viabilidad_legal}
+Todo el software desarrollado en este proyecto se ha construido utilizando herramientas de código abierto (\textit{Free and Open Source Software, FOSS}). La elección de estas herramientas se basó no solo en su capacidad técnica, sino también en sus licencias permisivas, que facilitan su uso en un entorno académico y de investigación. A continuación, se listan las licencias de las tecnologías principales utilizadas:
 
+\begin{itemize}
+    \item \textbf{Docker:} Licencia Apache 2.0.
+    \item \textbf{Apache Kafka:} Licencia Apache 2.0.
+    \item \textbf{Apache Zookeeper:} Licencia Apache 2.0.
+    \item \textbf{Apache Spark:} Licencia Apache 2.0.
+    \item \textbf{Jitsi Meet:} Licencia Apache 2.0.
+    \item \textbf{Python:} Licencia Python Software Foundation License (PSF).
+\end{itemize}
 
+A tener en cuenta que las horas expresadas en las tablas no reflejan al completo la realidad.
