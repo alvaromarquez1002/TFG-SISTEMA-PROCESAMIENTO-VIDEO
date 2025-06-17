@@ -1,91 +1,43 @@
-\capitulo{4}{Técnicas y herramientas}
 
-\subsection{Metodología de Desarrollo}
+\chapter{Técnicas y herramientas}
+\label{chap:tecnicas_herramientas}
 
-Para organizar y gestionar el trabajo de este TFG de una manera flexible y adaptativa, se ha decidido emplear un enfoque ágil.
+En este capítulo describo las principales tecnologías, lenguajes de programación y herramientas que han constituido la base para el desarrollo de mi Trabajo de Fin de Grado. Mi elección de cada una de ellas responde a las necesidades específicas de construir una infraestructura de procesamiento de vídeo que fuera robusta, escalable y reproducible.
 
-Las ideas principales de esta forma de trabajo aplicada al TFG son:
+\section{Herramientas de Desarrollo y Gestión}
+\label{sec:herramientas_desarrollo}
 
-\begin{itemize}
-    \item \textbf{Organización en Sprints:} El trabajo total se divide en periodos de tiempo, los Sprints. En cada Sprint, el objetivo es completar un conjunto concreto de tareas previamente seleccionadas.
-    
-    \item \textbf{Uso de Jira para la Gestión:} Se utiliza la herramienta de software \textbf{Jira} como soporte principal para la gestión del proyecto. En Jira creo:
-        \begin{itemize}
-            \item Una lista general de tareas pendientes (Backlog).
-            \item La planificación de qué tareas se abordarán en cada Sprint.
-            \item Un tablero visual para seguir el estado de las tareas del Sprint actual (si están Por Hacer, En Curso o ya Hechas).
-            \item Se usan también Épicas para agrupar fases grandes del proyecto (como la investigación inicial, el desarrollo de componentes, la escritura de la documentación, etc.).
-        \end{itemize}
-    
-    \item \textbf{Seguimiento y Adaptación:} Se mantienen reuniones periódicas (normalmente semanales) con los tutores para revisar el trabajo realizado en el Sprint, comentar los avances, resolver dudas o problemas...
-\end{itemize}
+\subsection{Python}
+El lenguaje principal que he utilizado para desarrollar la lógica del proyecto ha sido \textbf{Python} \cite{python_software_foundation}. Lo elegí por su sintaxis clara, que facilita un desarrollo rápido, y por su enorme ecosistema de librerías, especialmente en el ámbito del procesamiento de datos, lo que lo hace ideal para integrarse con las tecnologías de Big Data que necesitaba para mi TFG.
 
-Este enfoque ágil resulta beneficioso, ya que permite adaptarse mejor a los resultados de la investigación o a los desafíos técnicos que puedan surgir, a la vez que facilita un seguimiento continuo del progreso hacia los objetivos finales.
+\subsection{Jira y Metodología Ágil}
+Para gestionar el proyecto, decidí emplear un enfoque ágil basado en \textbf{Scrum} \cite{trigas2012metodologia}, utilizando \textbf{Jira} \cite{atlassian_jira} como herramienta de soporte. Esta metodología me ha permitido organizar el trabajo en Épicas y Sprints, mantener un backlog de tareas actualizado y visualizar el progreso en un tablero Kanban. Este enfoque ha sido fundamental para poder adaptarme a los imprevistos y a los desafíos técnicos que surgieron, manteniendo siempre un seguimiento claro del trabajo realizado.
 
-\subsubsection{Apache Kafka}
+\subsection{Git y GitHub}
+Para el control de versiones he utilizado \textbf{Git}, y he alojado el proyecto en un repositorio privado en \textbf{GitHub}. Esta práctica ha sido esencial para mantener un historial de cambios detallado, trabajar de forma segura y asegurar la integridad de todo el código y la documentación.
 
-Apache Kafka \cite{KafkaWebDoc} es una plataforma distribuida de código abierto, ampliamente reconocida en la industria, diseñada específicamente para la gestión y procesamiento de flujos de eventos en tiempo real. Funciona como un sistema de mensajería publicar-suscribir de alto rendimiento, que garantiza durabilidad y tolerancia a fallos.
+\section{Infraestructura y Pipeline de Datos}
+\label{sec:herramientas_infraestructura}
+El núcleo del proyecto reside en la infraestructura que he diseñado para capturar, transportar y procesar los datos de vídeo.
 
-% Rol en este TFG
-En el marco de este proyecto, Apache Kafka se perfila como una pieza central de la arquitectura. Su rol principal será actuar como el sistema intermediario encargado de recibir de forma eficiente los flujos de datos generados por la fuente de vídeo (Jitsi/Jibri) y almacenarlos temporalmente de manera fiable para que sean consumidos posteriormente por el motor de procesamiento (Apache Spark). Esto aportando flexibilidad y robustez al conjunto.
-
-% Justificación / Por qué Kafka
-La elección de Kafka se fundamenta en:
-\begin{itemize}
-    \item \textbf{Manejo de Alto Volumen y Baja Latencia:} Kafka está optimizado para ingestar y servir grandes cantidades de datos (como los que puede generar el vídeo) con un retardo mínimo.
-    \item \textbf{Escalabilidad Nativa:} El sistema permite escalar la capacidad de Kafka para adaptarse a la carga de trabajo.
-    \item \textbf{Fiabilidad:} Su naturaleza distribuida y la duplicación de datos proporcionan tolerancia a fallos.
-\end{itemize}
-
-% Zookeeper / KRaft
-Es relevante mencionar que Kafka requiere de Apache Zookeeper para tareas de coordinación y gestión de metadatos. Aunque esta dependencia está siendo eliminada en las versiones más recientes mediante el protocolo KRaft (que simplifica la infraestructura), es un factor a tener en cuenta según la versión que finalmente se despliegue en el proyecto.
-
-% Consideraciones y Alternativas
-Una consideración técnica es que Kafka no está optimizado para manejar archivos de vídeo extremadamente grandes como mensajes únicos; se deben considerar estrategias como el envío de metadatos. Kafka es una opción preferente para este proyecto.
-
-\subsubsection{Apache Spark}
-
-Para realizar el procesamiento y análisis de los datos de vídeo (ya sean los flujos recibidos a través de Kafka o los archivos MP4 grabados), la herramienta principal que he seleccionado es \textbf{Apache Spark} \cite{SparkWebDoc}. Se trata de un motor de análisis unificado y muy potente, diseñado para procesar grandes volúmenes de datos de forma distribuida y eficiente.
-
-La razón principal para elegir Spark en este TFG es su capacidad para manejar tanto el procesamiento por lotes (batch) como el procesamiento en tiempo real (streaming) utilizando una misma plataforma y APIs consistentes, especialmente a través de su interfaz para Python (\textit{PySpark}). Esto me da flexibilidad para implementar tanto el flujo offline como un posible flujo en tiempo real.
-
-Además, considero que Spark es adecuado por:
-\begin{itemize}
-    \item Su buena integración con el ecosistema Big Data, incluyendo una conexión nativa y robusta con Apache Kafka, así como con sistemas de almacenamiento como HDFS o almacenes compatibles con S3 (útil para leer los MP4s grabados).
-    \item Sus librerías incorporadas, como \textit{Spark SQL} (que podría usar para analizar metadatos o características extraídas de los vídeos) y MLlib (su librería de Machine Learning).
-    \item La disponibilidad de una API en Python (PySpark), que facilita su uso dado que el resto del desarrollo probablemente se realizará en este lenguaje.
-\end{itemize}
-
-Soy consciente de que el procesamiento de vídeo puede ser intensivo en recursos, especialmente en memoria, por lo que la configuración y optimización del clúster será un aspecto importante a tener en cuenta durante la implementación.
-
-\subsubsection{Jitsi / Jibri}
-
-
-Para la captura del vídeo de las sesiones de rehabilitación, que es la fuente de datos principal de este proyecto, he decidido basarme en la plataforma de videoconferencia de código abierto \textbf{Jitsi} \cite{JitsiJibriDocs}. Jitsi es un conjunto de herramientas que permiten crear sistemas de videoconferencia seguros y escalables. Sus componentes principales son Jitsi Meet (la aplicación web/móvil para los usuarios) y Jitsi Videobridge (el servidor que gestiona los flujos de vídeo).
-
-Dentro del ecosistema Jitsi, el componente clave para mi TFG es \textbf{Jibri} (Jitsi Broadcasting Infrastructure). Jibri es una herramienta diseñada específicamente para grabar o transmitir una conferencia completa de Jitsi Meet.
-
-El rol de Jibri en mi proyecto es fundamental: será el encargado de generar los datos de vídeo brutos que posteriormente procesará Spark. Según el enfoque que siga (offline o tiempo real), utilizaré Jibri para:
-\begin{itemize}
-    \item \textbf{Grabar las sesiones} de ejercicios en archivos de vídeo estándar (formato MP4). Esta es la opción inicial más recomendada.
-    \item O bien transmitir la sesión en tiempo real usando el protocolo RTMP, lo que requeriría una integración más compleja con Kafka o un intermediario.
-\end{itemize}
-
-La elección de Jitsi/Jibri se basa en que es una solución \textbf{completa, de código abierto y gratuita}, que me proporciona directamente la funcionalidad de captura y grabación/streaming de vídeo necesaria como punto de partida para mi pipeline de procesamiento.
-
-No obstante, soy consciente de algunas consideraciones importantes al usar Jibri: requiere una máquina (o máquina virtual) dedicada con recursos suficientes (CPU, RAM), y una única instancia de Jibri solo puede gestionar una grabación o transmisión a la vez, lo que implica pensar en la escalabilidad si se necesitaran muchas sesiones concurrentes.
-
+\subsection{Sistema Operativo Base: Debian 12}
+Tras encontrar numerosos problemas de compatibilidad y permisos en Windows con WSL2, tomé la decisión de migrar todo el entorno de desarrollo a un sistema operativo Linux nativo. La elección fue \textbf{Debian 12}, principalmente por su reconocida estabilidad y por ser un estándar en entornos de servidor, lo que me garantizaba un comportamiento más predecible de las herramientas de red y de Docker.
 
 \subsection{Contenerización con Docker y Docker Compose}
+Desde el principio tuve claro que la contenerización era necesaria para este proyecto. He utilizado \textbf{Docker} \cite{docker_docs} para empaquetar cada servicio (Kafka, Zookeeper, mi aplicación Python) en contenedores aislados. Esto garantiza que el entorno sea reproducible y evita los clásicos problemas de dependencias entre distintas máquinas.
 
-Para asegurar un entorno de desarrollo y despliegue consistente, portable y aislado, se ha utilizado \textbf{Docker}, una plataforma de contenerización de código abierto \cite{docker_docs}. Su función principal es empaquetar una aplicación y todas sus dependencias (librerías, configuraciones, etc.) en una unidad aislada y portable llamada contenedor. Gracias a esto, se elimina el clásico problema de "en mi máquina funciona", garantizando la consistencia y reproducibilidad del entorno.
+Para orquestar todos estos contenedores, he usado \textbf{Docker Compose}. Mediante un único archivo \texttt{docker-compose.yml}, he podido definir toda la arquitectura de la aplicación, incluyendo la red que los conecta y las dependencias de arranque, lo que ha simplificado enormemente el despliegue y las pruebas del sistema completo.
 
-Mientras que Docker gestiona contenedores individuales, un sistema como el de este TFG requiere que múltiples contenedores (uno para Kafka, otro para Zookeeper, otro para la aplicación Python) se comuniquen y funcionen de manera orquestada. Para esta tarea se ha empleado \textbf{Docker Compose}, una herramienta que permite definir y gestionar aplicaciones multi-contenedor a través de un único archivo declarativo en formato YAML \cite{docker_docs}. El uso de Docker Compose en este proyecto ha sido clave para automatizar el despliegue del sistema completo, manejando la creación de redes, el orden de arranque de los servicios y su configuración con un solo comando.
+\subsection{Captura de Vídeo: Jitsi y Jibri}
+Como fuente de los datos de vídeo he utilizado la plataforma de código abierto \textbf{Jitsi} \cite{JitsiJibriDocs}. En concreto, el componente clave para mi proyecto es \textbf{Jibri} (Jitsi Broadcasting Infrastructure). Su función es unirse a una conferencia y grabarla en un archivo de vídeo \textbf{MP4}, que se convierte en el dato de entrada para mi pipeline de procesamiento. Elegí Jitsi por ser una solución completa y gratuita que me proporcionaba la funcionalidad de captura que necesitaba.
 
-La implementación se basa en dos ficheros principales:
-\begin{description}
-    \item[\texttt{Dockerfile:}] Actúa como un plano para construir la imagen personalizada de la aplicación de procesamiento en Python. Define una imagen base ligera, copia el código fuente y las dependencias (\texttt{requirements.txt}), y especifica el comando para ejecutar la aplicación. Esto asegura que el entorno de ejecución del código sea siempre el mismo.
-    \item[\texttt{docker-compose.yml:}] Es el fichero de orquestación. En él se definen los tres servicios del sistema: \texttt{zookeeper}, \texttt{kafka} y el servicio \texttt{python-processor} (basado en el Dockerfile anterior). Para Kafka y Zookeeper se utilizan imágenes públicas \cite{confluent_docker}, lo que ahorra un tiempo de configuración considerable. Este fichero también define la red virtual a través de la cual se comunican los contenedores y establece las dependencias de arranque (por ejemplo, que Kafka no inicie hasta que Zookeeper esté listo) mediante la directiva \texttt{depends\_on}.
-\end{description}
+\subsection{Pipeline de Datos: Apache Kafka y Apache Spark}
+La arquitectura de procesamiento se basa en un pipeline de datos en streaming.
+\begin{itemize}
+    \item \textbf{Apache Kafka} \cite{KafkaWebDoc}: En mi arquitectura, Kafka actúa como un sistema intermediario que desacopla el sistema de captura del de procesamiento. Su función es recibir los datos de Jibri de forma fiable y almacenarlos en \textit{topics} hasta que Spark esté listo para consumirlos. Lo escogí por su alta capacidad para manejar grandes volúmenes de datos y su tolerancia a fallos.
+    \item \textbf{Apache Spark} \cite{SparkWebDoc}: Para el análisis del vídeo, la herramienta seleccionada es Spark. Su principal ventaja para mi TFG es su potente motor de procesamiento distribuido y su flexibilidad para trabajar tanto con datos en streaming como con archivos estáticos (batch). He utilizado su API de Python, \textbf{PySpark}, para desarrollar los scripts de procesamiento.
+\end{itemize}
 
-En
+\section{Herramientas de Documentación}
+\subsection{\LaTeX{} y Overleaf}
+Para la redacción de esta memoria, he utilizado el sistema de composición de textos \textbf{\LaTeX{}} \cite{wiki:latex} por la alta calidad profesional de sus resultados. Todo el trabajo de redacción lo he realizado sobre \textbf{Overleaf}, un editor en línea que facilita enormemente la escritura y compilación de documentos \LaTeX{} sin necesidad de instalaciones locales.
