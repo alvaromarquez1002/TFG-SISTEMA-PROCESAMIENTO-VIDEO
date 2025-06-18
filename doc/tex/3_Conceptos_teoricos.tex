@@ -1,83 +1,81 @@
-\capitulo{3}{Conceptos teóricos}
+\chapter{Conceptos Teóricos}
+\label{chap:conceptos}
 
-En aquellos proyectos que necesiten para su comprensión y desarrollo de unos conceptos teóricos de una determinada materia o de un determinado dominio de conocimiento, debe existir un apartado que sintetice dichos conceptos.
+Para comprender las decisiones de diseño y la implementación de la infraestructura de este TFG, es necesario primero asentar las bases teóricas sobre las que se construyen las tecnologías seleccionadas. Este capítulo profundiza en los paradigmas y arquitecturas clave del procesamiento de datos distribuidos, el streaming de vídeo y los conceptos de red y seguridad que han sido el núcleo de este proyecto.
 
-Algunos conceptos teóricos de \LaTeX{} \footnote{Créditos a los proyectos de Álvaro López Cantero: Configurador de Presupuestos y Roberto Izquierdo Amo: PLQuiz}.
+\section{Paradigmas de la Arquitectura}
+\label{sec:conceptos_arquitecturas}
+El sistema desarrollado en este TFG es, en esencia, un sistema distribuido. En lugar de una única aplicación monolítica, se compone de múltiples servicios independientes que necesitan comunicarse y coordinarse de manera eficiente. Los siguientes paradigmas han sido fundamentales para su diseño.
 
-\section{Secciones}
+\subsection{Sistemas de Mensajería: El Modelo Publicar-Suscribir}
+El modelo de comunicación Publicar-Suscribir es un patrón de mensajería asíncrono. En él, las aplicaciones que envían mensajes, llamadas \textbf{productores}, no los envían directamente a los receptores, sino que los publican en canales lógicos llamados \textbf{tópicos}. Por otro lado, las aplicaciones que reciben los mensajes, llamadas \textbf{consumidores}, se suscriben a los tópicos de su interés para recibirlos.
 
-Las secciones se incluyen con el comando section.
+La principal ventaja de este patrón, y la razón por la que lo he aplicado en mi proyecto, es el \textbf{desacoplamiento} que introduce entre los componentes. El sistema de captura de vídeo (Jibri) puede publicar datos sin necesidad de saber cuántos sistemas de procesamiento hay, dónde están ubicados o si están disponibles en ese momento. Esto dota a la arquitectura de una enorme flexibilidad y escalabilidad.
 
-\subsection{Subsecciones}
-
-Además de secciones tenemos subsecciones.
-
-\subsubsection{Subsubsecciones}
-
-Y subsecciones. 
-
-
-\section{Referencias}
-
-Las referencias se incluyen en el texto usando cite~\cite{wiki:latex}. Para citar webs, artículos o libros~\cite{koza92}, si se desean citar más de uno en el mismo lugar~\cite{bortolot2005, koza92}.
-
-
-\section{Imágenes}
-
-Se pueden incluir imágenes con los comandos standard de \LaTeX, pero esta plantilla dispone de comandos propios como por ejemplo el siguiente:
-
-\imagen{escudoInfor}{Autómata para una expresión vacía}{.5}
-
-
-
-\section{Listas de items}
-
-Existen tres posibilidades:
-
+\subsection{Procesamiento de Datos: Batch vs. Streaming}
+El análisis de datos puede abordarse de dos maneras principales:
 \begin{itemize}
-	\item primer item.
-	\item segundo item.
+    \item \textbf{Procesamiento por Lotes (Batch):} Consiste en procesar grandes volúmenes de datos que han sido almacenados previamente. Es eficiente para grandes cantidades de datos donde la latencia no es crítica.
+    \item \textbf{Procesamiento de Flujos (Streaming):} Se centra en procesar los datos a medida que se generan, en secuencias continuas e ilimitadas. Es ideal para aplicaciones que requieren una respuesta en tiempo real.
+\end{itemize}
+Mi proyecto se centra inicialmente en un flujo \textit{offline} (procesamiento batch de archivos MP4), pero la arquitectura se ha diseñado con los principios del streaming en mente, utilizando herramientas que soportan ambos paradigmas, lo que facilita una futura evolución hacia el tiempo real.
+
+\subsection{Virtualización por Contenedores y Orquestación}
+La \textbf{virtualización por contenedores}, implementada con Docker, se basa en aislar procesos a nivel de sistema operativo. A diferencia de las máquinas virtuales tradicionales que virtualizan el hardware completo (incluyendo un sistema operativo invitado), los contenedores comparten el kernel del sistema anfitrión. Esto los hace extremadamente ligeros y rápidos de iniciar.
+
+Cuando una aplicación consta de múltiples contenedores, surge la necesidad de la \textbf{orquestación}, que es la gestión automatizada de estos. He utilizado \textbf{Docker Compose} como orquestador para definir la topología de la aplicación, su red y sus dependencias en un único fichero, simplificando radicalmente su despliegue.
+
+\section{Tecnologías Fundamentales del Pipeline}
+\label{sec:conceptos_tecnologias}
+
+\subsection{Jitsi y el Protocolo RTMP}
+Jitsi es una colección de proyectos de software libre para construir soluciones de videoconferencia. Su arquitectura se basa en el concepto de \textbf{Unidad de Reenvío Selectivo}, implementado por su componente \textbf{Jitsi Videobridge (JVB)} \cite{JitsiJibriDocs}. Una SFU no mezcla los flujos de vídeo, sino que recibe el flujo de cada participante y lo reenvía de forma selectiva al resto. Esto reduce drásticamente la carga de la CPU en el servidor y es lo que permite a Jitsi ser tan escalable.
+
+Dentro de este ecosistema, \textbf{Jibri} actúa como un cliente especial que se une a la conferencia, lanza un navegador sin interfaz gráfica y utiliza \textbf{FFmpeg} para capturar la vista compuesta y realizar dos acciones posibles:
+\begin{itemize}
+    \item \textbf{Grabación a fichero:} Genera un archivo MP4, que es el enfoque principal de este TFG.
+    \item \textbf{Transmisión en vivo:} Envía un flujo de vídeo mediante el \textbf{Protocolo de Mensajería en Tiempo Real (RTMP)}. RTMP es un protocolo basado en TCP, desarrollado para la transmisión de audio, vídeo y datos a través de internet con baja latencia. Aunque mi implementación se centra en el procesamiento offline de los MP4, RTMP es importante para la posible evolución del sistema a un análisis en tiempo real.
 \end{itemize}
 
-\begin{enumerate}
-	\item primer item.
-	\item segundo item.
-\end{enumerate}
-
-\begin{description}
-	\item[Primer item] más información sobre el primer item.
-	\item[Segundo item] más información sobre el segundo item.
-\end{description}
-	
+\subsection{Apache Kafka: Arquitectura de Log Distribuido}
+Kafka \cite{KafkaWebDoc} es una plataforma de streaming de eventos cuya arquitectura se basa en el concepto de un \textbf{log de confirmación distribuido}. Cada tópico es, en esencia, un fichero de registro estructurado e inmutable.
 \begin{itemize}
-\item 
+    \item \textbf{Particiones y Replicación:} Para lograr escalabilidad y tolerancia a fallos, cada tópico se divide en una o más \textit{particiones}. Cada partición es un log ordenado que puede ser alojado en un servidor diferente. Además, cada partición se replica a través de varios servidores para garantizar la durabilidad.
+    \item \textbf{Offsets:} Cada mensaje en una partición tiene un identificador numérico secuencial único llamado \textit{offset}, que los consumidores usan para saber qué mensajes han procesado.
+    \item \textbf{Coordinación con Zookeeper/KRaft:} Kafka utiliza un sistema de coordinación para gestionar los metadatos del clúster. Tradicionalmente ha sido Apache Zookeeper, aunque las versiones más recientes están migrando a un protocolo propio llamado KRaft.
 \end{itemize}
 
-\section{Tablas}
+\subsection{Apache Spark: Modelo de Ejecución y Procesamiento}
+La potencia de Apache Spark reside en su modelo de computación en memoria y su motor de ejecución distribuido \cite{SparkWebDoc}.
+\begin{itemize}
+    \item \textbf{RDD, DataFrames y el Optimizador Catalyst:} La abstracción de datos fundamental en Spark es el \textbf{RDD (Resilient Distributed Dataset)}, una colección de elementos inmutable y distribuida. Sobre esta idea, Spark introdujo los \textbf{DataFrames}, una API de más alto nivel que organiza los datos en columnas con nombre y permite optimizaciones automáticas a través de su motor \textbf{Catalyst}, que traduce las operaciones a un plan de ejecución eficiente.
+    \item \textbf{Transformaciones y Acciones (Ejecución Perezosa):} Las operaciones en Spark se dividen en \textit{transformaciones} (`map`, `filter`) y \textit{acciones} (`count`, `save`). Spark no ejecuta ninguna transformación hasta que se invoca una acción, a esto se le llama \textbf{ejecución perezosa}.
+    \item \textbf{Planificación DAG:} Al llamar a una acción, Spark crea un \textbf{Grafo Acíclico Dirigido (DAG)} de las operaciones a realizar. El planificador de Spark divide este grafo en etapas y tareas que se distribuyen entre los nodos del clúster para su ejecución en paralelo.
+\end{itemize}
 
-Igualmente se pueden usar los comandos específicos de \LaTeX o bien usar alguno de los comandos de la plantilla.
+\subsubsection{Diseño para la Extensibilidad (Línea Futura)}
+De cara a la futura línea de trabajo sobre un script de análisis personalizable, el diseño de la aplicación Spark debe considerar la extensibilidad. Para ello, podría aplicar patrones de diseño de software como el \textbf{Strategy Pattern}, que permitiría definir una familia de algoritmos de análisis (uno para contar objetos, otro para detectar movimiento) y hacerlos intercambiables. La elección del algoritmo a ejecutar podría dictarse mediante un fichero de configuración externo, siguiendo el principio de \textbf{Configuration as Code}, lo que dotaría al sistema de una gran flexibilidad.
 
-\tablaSmall{Herramientas y tecnologías utilizadas en cada parte del proyecto}{l c c c c}{herramientasportipodeuso}
-{ \multicolumn{1}{l}{Herramientas} & App AngularJS & API REST & BD & Memoria \\}{ 
-HTML5 & X & & &\\
-CSS3 & X & & &\\
-BOOTSTRAP & X & & &\\
-JavaScript & X & & &\\
-AngularJS & X & & &\\
-Bower & X & & &\\
-PHP & & X & &\\
-Karma + Jasmine & X & & &\\
-Slim framework & & X & &\\
-Idiorm & & X & &\\
-Composer & & X & &\\
-JSON & X & X & &\\
-PhpStorm & X & X & &\\
-MySQL & & & X &\\
-PhpMyAdmin & & & X &\\
-Git + BitBucket & X & X & X & X\\
-Mik\TeX{} & & & & X\\
-\TeX{}Maker & & & & X\\
-Astah & & & & X\\
-Balsamiq Mockups & X & & &\\
-VersionOne & X & X & X & X\\
-} 
+\subsection{Python y OpenCV: El Ecosistema de Análisis}
+Mientras que Spark es el motor que distribuye las tareas, la lógica concreta del análisis de vídeo la he implementado utilizando el ecosistema de Python.
+\begin{itemize}
+    \item \textbf{PySpark:} Es la API de Python para Spark. La he utilizado como "pegamento" para definir las transformaciones sobre los datos y enviar el código de procesamiento a los nodos del clúster. Su uso me permite combinar la potencia de Spark con la simplicidad y la vasta cantidad de librerías de Python.
+    \item \textbf{OpenCV (Open Source Computer Vision Library):} Es la librería de facto para tareas de visión por computador \cite{opencv_library}. Dentro de mi script de PySpark, utilizaré OpenCV para realizar las operaciones sobre los fotogramas de vídeo, como la lectura de los archivos MP4, la manipulación de imágenes y la aplicación de algoritmos para la extracción de características.
+\end{itemize}
+
+\section{Conceptos de Red y Seguridad Aplicados}
+\label{sec:conceptos_red_seguridad}
+Durante el despliegue de Jitsi, surgieron importantes desafíos relacionados con la red y la seguridad. Esta experiencia de depuración es una parte fundamental del trabajo de este TFG.
+
+\subsection{Comunicación Segura: HTTP vs. HTTPS}
+HTTP es el protocolo fundamental de la web, pero transmite los datos en texto plano. \textbf{HTTPS} es su versión segura, que utiliza un cifrado \textbf{SSL/TLS} para proteger la comunicación. La relevancia para este proyecto es crítica: los navegadores web modernos solo conceden permisos de acceso a cámara y micrófono a páginas servidas bajo HTTPS, lo que me obligó a intentar implementar esta configuración en mi entorno de desarrollo.
+
+\subsection{Certificados SSL/TLS: Autofirmados vs. Let's Encrypt}
+Un certificado SSL/TLS valida la identidad de un servidor.
+\begin{itemize}
+    \item \textbf{Certificados Autofirmados:} Son certificados que generé yo mismo para las pruebas iniciales. Los navegadores no confían en ellos, lo que provoca errores de seguridad que impiden el acceso a los permisos de medios y dificulta el despliegue.
+    \item \textbf{Certificados de una CA (Let's Encrypt):} Una Autoridad de Certificación (CA) es una entidad de confianza. \textbf{Let's Encrypt} \cite{letsencrypt_org} es una CA gratuita y automatizada cuyos certificados son aceptados por todos los navegadores. La estrategia final y correcta para la implementación de HTTPS en Jitsi se basa en utilizar Let's Encrypt.
+\end{itemize}
+
+\subsection{Resolución de Nombres en Desarrollo: El fichero \texttt{/etc/hosts}}
+Para el desarrollo local, el fichero \texttt{/etc/hosts} me ha permitido simular nombres de dominio (como \texttt{jitsi.localhost}) y asociarlos a mi máquina local (\texttt{127.0.0.1}), un paso necesario para la correcta configuración interna de los servicios de Jitsi sin depender de un servidor DNS público.
