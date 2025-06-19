@@ -1,7 +1,79 @@
-\capitulo{5}{Aspectos relevantes del desarrollo del proyecto}
+\chapter{Aspectos relevantes del desarrollo del proyecto}
+\label{chap:desarrollo}
 
-Este apartado pretende recoger los aspectos más interesantes del desarrollo del proyecto, comentados por los autores del mismo.
-Debe incluir desde la exposición del ciclo de vida utilizado, hasta los detalles de mayor relevancia de las fases de análisis, diseño e implementación.
-Se busca que no sea una mera operación de copiar y pegar diagramas y extractos del código fuente, sino que realmente se justifiquen los caminos de solución que se han tomado, especialmente aquellos que no sean triviales.
-Puede ser el lugar más adecuado para documentar los aspectos más interesantes del diseño y de la implementación, con un mayor hincapié en aspectos tales como el tipo de arquitectura elegido, los índices de las tablas de la base de datos, normalización y desnormalización, distribución en ficheros3, reglas de negocio dentro de las bases de datos (EDVHV GH GDWRV DFWLYDV), aspectos de desarrollo relacionados con el WWW...
-Este apartado, debe convertirse en el resumen de la experiencia práctica del proyecto, y por sí mismo justifica que la memoria se convierta en un documento útil, fuente de referencia para los autores, los tutores y futuros alumnos.
+En este capítulo expongo la crónica del desarrollo de este TFG. Lejos de ser un proceso lineal, el trabajo ha seguido un camino iterativo, marcado por la investigación, la implementación de prototipos, la aparición de desafíos técnicos y la toma de decisiones estratégicas para superar los bloqueos. Esta narrativa busca reflejar fielmente el proceso de ingeniería real que he llevado a cabo, detallando no solo los éxitos, sino también los problemas y el proceso de depuración que ha sido necesario para resolverlos.
+
+\section{Fase Inicial: Diseño de la Arquitectura y Selección de Tecnologías}
+El proyecto comenzó con una fase de investigación y planificación, documentada en el Anexo \ref{apendice:plan_proyecto}. Durante esta etapa, se tomaron decisiones fundamentales sobre la pila tecnológica y el alcance inicial del proyecto.
+
+\subsection{Selección de la Pila Tecnológica}
+Basándome en los requisitos de construir un sistema de procesamiento de vídeo escalable, realicé un estudio de las tecnologías de Big Data más adecuadas, como se detalla en el Capítulo \ref{chap:tecnicas_herramientas}. La pila tecnológica seleccionada fue:
+\begin{itemize}
+    \item \textbf{Jitsi/Jibri:} Como solución de código abierto para la captura de las sesiones de vídeo. Opté por utilizar el proyecto oficial \texttt{docker-jitsi-meet}, ya que proporciona una configuración pre-empaquetada con Docker Compose que, teóricamente, simplifica el despliegue de todos sus micro servicios (web, prosody, jicofo, jvb, jibri).
+    \item \textbf{Apache Kafka:} Como bus de mensajería para desacoplar la captura del procesamiento.
+    \item \textbf{Apache Spark:} Como motor de procesamiento distribuido para el futuro análisis de los datos.
+\end{itemize}
+
+\subsection{Definición del Alcance: Enfoque Offline como Primer Hito}
+Desde el principio, era consciente de la complejidad de un sistema de procesamiento en tiempo real. La integración de un flujo RTMP de Jibri con Kafka y Spark Streaming presenta desafíos técnicos significativos. Por ello, tomé una decisión estratégica clave para mitigar riesgos: \textbf{priorizar un flujo de trabajo offline como primer objetivo funcional}. En este enfoque, Jibri grabaría las sesiones en archivos MP4, que se almacenarían en un sistema de ficheros accesible para que Spark los procesara por lotes. Esto me permitió dividir el problema en fases manejables, asegurando la entrega de una prueba de concepto funcional antes de abordar la complejidad del streaming en tiempo real.
+
+\section{Acto I: El Desafío del Entorno Windows con WSL2}
+\label{sec:desarrollo_acto1}
+El primer intento de despliegue se realizó sobre mi máquina de desarrollo principal: un sistema Windows 11 con el Subsistema de Windows para Linux (WSL2) y Docker Desktop. Aunque este entorno es muy versátil, la interacción entre el sistema de archivos de Windows (NTFS) y los permisos de Linux dentro de los contenedores demostró ser la fuente de problemas complejos y bloqueantes.
+
+\subsection{Primer Despliegue de Jitsi y Análisis de Errores Críticos}
+Tras clonar el repositorio de \texttt{docker-jitsi-meet} y configurar el fichero \texttt{.env}, el primer intento de levantar la pila de servicios con \texttt{docker-compose up} resultó en un fallo en cascada. Dos componentes clave, Prosody y Jibri, fallaban sistemáticamente.
+
+\subsubsection{Errores de Permisos en el Contenedor Prosody}
+El análisis de los logs del contenedor de Prosody (el servidor XMPP) fue el primer indicio claro del problema subyacente. Los registros mostraban de forma repetida y consistente errores de tipo \texttt{Permission denied}, como se puede observar en este extracto:
+\begin{verbatim}[frame=single, label={Fragmento de log de error de Prosody}]
+datamanager error Unable to write to accounts storage 
+('/config/data/auth%2elocalhost/accounts/focus.dat~: Permission denied')
+\end{verbatim}
+Este error se debe a un conflicto en la gestión de permisos de ficheros entre sistemas operativos. El proceso de Prosody se ejecuta dentro del contenedor con un usuario y grupo específicos de Linux (\textit{uid/gid}), pero el volumen donde intenta escribir (\texttt{/config/data}) está montado desde el sistema de archivos NTFS de Windows a través de WSL2. La capa de traducción de permisos de WSL2 no era capaz de mapear correctamente los permisos, impidiendo que el proceso tuviera los privilegios de escritura necesarios. A pesar de intentar modificar los permisos en Windows y probar diferentes configuraciones de montaje de volúmenes en Docker, el problema persistió, indicando que se trataba de una limitación fundamental del entorno.
+
+\subsubsection{Fallos de Autenticación en Cascada: Jibri y Jicofo}
+El fallo de Prosody provocó un efecto dominó. \textbf{Jicofo}, el componente que gestiona las conferencias, no podía establecer conexión con el servidor XMPP. De forma aún más crítica, \textbf{Jibri}, el grabador de vídeo, fallaba con dos errores distintos:
+\begin{itemize}
+    \item Un error fatal \texttt{FATAL ERROR: Jibri recorder password and auth password must be set}, sugiriendo un problema en cómo se leían las variables de entorno desde el fichero \texttt{.env} en el entorno WSL2.
+    \item Un error de autenticación \texttt{SASLError using SCRAM-SHA-1: malformed-request}, consecuencia directa de no poder conectar con un servidor Prosody que no había logrado arrancar correctamente.
+\end{itemize}
+
+\subsection{Decisión Estratégica: Pivote a un Entorno Linux Nativo}
+Tras varios días de depuración, la conclusión fue clara: los problemas no eran de configuración de Jitsi, sino de la propia infraestructura de desarrollo basada en Windows y WSL2. Intentar resolver estas incompatibilidades de bajo nivel representaba un riesgo muy alto y una posible pérdida de tiempo que se desviaba de los objetivos del TFG.
+
+Por ello, tomé la decisión de ingeniería más importante del proyecto hasta la fecha: \textbf{realizar un pivote estratégico y migrar todo el entorno a un sistema operativo Linux nativo}. Se eligió Debian 12 por su estabilidad y su amplio uso en servidores, lo que me proporcionaría un entorno predecible y libre de las capas de compatibilidad que estaban causando los problemas.
+
+\section{Acto II: Implementación y Depuración Sistemática en Debian}
+\label{sec:desarrollo_acto2}
+La migración a un entorno Linux nativo fue un punto de inflexión en el proyecto. Como esperaba, los problemas de permisos relacionados con WSL2 desaparecieron de inmediato. Al ejecutar el comando \texttt{docker-compose up -d} en el directorio de \texttt{docker-jitsi-meet}, los cinco contenedores principales (prosody, jicofo, jvb, web y jibri) lograron arrancar y mantenerse en ejecución, un hito que no había sido posible alcanzar anteriormente.
+
+Sin embargo, el éxito inicial solo reveló la siguiente capa de desafíos. A pesar de que los servicios estaban activos, la interfaz web de Jitsi no era accesible, mostrando un error de "La conexión ha fallado". Esto dio comienzo a un nuevo e intensivo ciclo de depuración, esta vez centrado en la configuración de la red y los componentes internos de Jitsi.
+
+% S:captura 
+\subsection{Proceso de Depuración de la Conexión HTTP}
+Para solucionar el problema de conexión, apliqué un proceso de diagnóstico sistemático, analizando los logs de cada contenedor y el comportamiento de la aplicación web para aislar la causa raíz.
+
+\subsubsection{Diagnóstico del Protocolo de Conexión (WSS)}
+El primer hallazgo importante lo obtuve al inspeccionar la consola de desarrollador del navegador. Descubrí que, a pesar de que mi instancia estaba configurada para HTTP, el cliente web intentaba establecer una conexión segura mediante el protocolo WebSocket Secure (WSS). Esto fallaba porque el servidor no tenía configurado ningún certificado SSL/TLS. La solución pasaba por forzar al cliente a utilizar una conexión no segura.
+
+\subsubsection{Solución y Error de Montaje: \texttt{custom.config.js}}
+La documentación de Jitsi indica que se puede sobreescribir la configuración del cliente web mediante un archivo \texttt{custom.config.js}. Creé este archivo con el objetivo de deshabilitar la conexión segura. Sin embargo, al volver a lanzar los contenedores, el servicio web falló con un nuevo error: \texttt{...not a directory}. El problema era que Docker, al intentar montar mi archivo de configuración en un volumen, se encontraba con que el directorio de destino ya había sido creado por el script de inicio del contenedor. La solución fue asegurarme de crear la estructura de directorios y el fichero \texttt{custom.config.js} en la carpeta de configuración del host (\texttt{\textasciitilde{}/.jitsi-meet-cfg/web/}) \textit{antes} de ejecutar \texttt{docker-compose up} por primera vez.
+
+\subsubsection{Autenticación de Usuarios Anónimos (Invitados)}
+Una vez solucionado el problema anterior, logré acceder a la interfaz web, pero me enfrenté a un nuevo bloqueo: no podía crear una sala como usuario anónimo o invitado. Los logs de Prosody indicaron que la autenticación para el dominio de invitados no estaba configurada. Para solucionarlo, tuve que editar manualmente el fichero de configuración principal de Prosody (\texttt{prosody.cfg.lua}) y añadir un nuevo \texttt{VirtualHost} para \texttt{"guest.jitsi.localhost"}, habilitando explícitamente la autenticación anónima. Tras este cambio, finalmente logré crear una conferencia y establecer una comunicación de vídeo y audio funcional.
+
+\subsection{Iteración hacia HTTPS y Estrategia Actual}
+Con el sistema funcionando en HTTP, y siguiendo las recomendaciones de los tutores, el siguiente paso fue intentar una implementación con HTTPS.
+\begin{itemize}
+    \item \textbf{Intento con Certificados Autofirmados:} Mi primer enfoque fue utilizar certificados autofirmados generados con la herramienta \texttt{mkcert}. Sin embargo, esto me devolvió a un problema similar al de WSL2: el contenedor web de Jitsi (Nginx) no era capaz de leer o utilizar correctamente los certificados montados, provocando errores de SSL en el navegador.
+    
+    \item \textbf{Diagnóstico con OpenSSL:} Para diagnosticar el problema de forma precisa, utilicé la herramienta de línea de comandos \texttt{openssl s\_client} para conectarme directamente al puerto 443 del servidor. El análisis confirmó que el servidor no estaba presentando el certificado que yo le había proporcionado, sino uno por defecto, lo que indicaba un fallo en la configuración de Nginx o en cómo Docker montaba los certificados.
+    
+    \item \textbf{Estrategia Definitiva (Let's Encrypt):} Basado en esta experiencia y en las indicaciones de los tutores, la estrategia actual y definitiva del proyecto es implementar HTTPS utilizando certificados válidos emitidos por una autoridad de certificación reconocida como \textbf{Let's Encrypt}. Este enfoque, aunque requiere un dominio público, garantiza una solución estándar, robusta y confiable, eliminando todos los problemas de confianza del navegador. Las tareas técnicas asociadas a esta implementación forman parte de la fase final del proyecto.
+\end{itemize}
+
+%  documentación futura
+Este capítulo se completará, una vez finalizada la fase de implementación técnica, con una sección dedicada al desarrollo e integración del pipeline con Apache Spark, siguiendo la misma estructura.
+
+%  falta anadir FIGURAS, CAPS, DIAGRAMAS...
