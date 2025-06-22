@@ -1,9 +1,31 @@
-\apendice{Anexo de sostenibilización curricular}
+\apendice{Anexo de Sostenibilización Curricular}
+\label{apendice:sostenibilidad}
 
 \section{Introducción}
-Este anexo incluirá una reflexión personal del alumnado sobre los aspectos de la sostenibilidad que se abordan en el trabajo.
-Se pueden incluir tantas subsecciones como sean necesarias con la intención de explicar las competencias de sostenibilidad adquiridas durante el alumnado y aplicadas al Trabajo de Fin de Grado.
+La ingeniería, y en particular la ingeniería informática, tiene un profundo impacto en la sociedad y en el entorno. Por ello, considero que la formación de un ingeniero no puede limitarse únicamente al dominio técnico, sino que debe incorporar una visión crítica y responsable sobre las implicaciones de su trabajo. Este anexo es una reflexión personal sobre cómo los principios del Desarrollo Sostenible, entendido como la capacidad de satisfacer las necesidades actuales sin comprometer las de las generaciones futuras, se han manifestado en mi formación y, de manera específica, en el desarrollo de este Trabajo de Fin de Grado.
 
-Más información en el documento de la CRUE \url{https://www.crue.org/wp-content/uploads/2020/02/Directrices_Sosteniblidad_Crue2012.pdf}.
+A lo largo de mi formación, he adquirido una serie de competencias que me han permitido abordar este proyecto no solo como un desafío técnico, sino también como una oportunidad para aplicar soluciones tecnológicas a problemas reales con una perspectiva social, ambiental y ética. Siguiendo las directrices propuestas por la CRUE \cite{crue2012sostenibilidad}, a continuación detallo cómo he aplicado estas competencias en mi TFG.
 
-Este anexo tendrá una extensión comprendida entre 600 y 800 palabras.
+\section{Competencias de Sostenibilidad Aplicadas al TFG}
+
+\subsection{SOS1: Contextualización Crítica del Conocimiento}
+Esta competencia se refiere a la capacidad de interrelacionar el conocimiento técnico con la problemática social, económica y ambiental. Desde el inicio, este TFG se ha enmarcado en un contexto social muy claro: el desafío que suponen las enfermedades neurodegenerativas, como el Párkinson, para nuestro sistema de salud. Mi trabajo no ha sido un ejercicio técnico aislado, sino que he tenido que comprender las necesidades reales de los pacientes y los terapeutas. Entender que la tecnología que desarrollo puede mejorar la calidad de vida de personas con movilidad reducida, facilitando su acceso a terapias de rehabilitación y reduciendo la carga sobre sus familias, me ha permitido contextualizar mi labor como ingeniero y darle un propósito que va más allá del código. He aprendido que la tecnología solo tiene sentido si responde a una necesidad humana real.
+
+\subsection{SOS2: Utilización Sostenible de Recursos y Prevención de Impactos}
+A primera vista, un proyecto de software puede parecer alejado del concepto de sostenibilidad ambiental, pero la realidad es que el uso de recursos computacionales tiene un impacto directo en el consumo energético. En este sentido, he aplicado esta competencia en varias decisiones clave:
+\begin{itemize}
+    \item \textbf{Eficiencia de la Arquitectura:} La elección de una arquitectura de microservicios y, en particular, el uso de Jitsi con su tecnología SFU (Selective Forwarding Unit), no es solo una decisión técnica. Una arquitectura SFU es mucho más eficiente en el uso de CPU que las alternativas más antiguas (MCU), lo que se traduce en un menor consumo energético del servidor.
+    \item \textbf{Uso de Código Abierto:} Mi decisión de basar todo el proyecto en herramientas de software libre y de código abierto (FOSS) como Linux, Docker, Kafka, Spark y Jitsi, es en sí misma una forma de utilización sostenible de los recursos. En lugar de desarrollar cada componente desde cero, he aprovechado el conocimiento y el trabajo de una comunidad global, contribuyendo a un ecosistema de conocimiento compartido y evitando la duplicación innecesaria de esfuerzos.
+    \item \textbf{Impacto Ambiental de la Telerehabilitación:} El propio objetivo del sistema tiene una dimensión de sostenibilidad ambiental. Al facilitar las terapias a distancia, se reduce la necesidad de desplazamientos de pacientes y terapeutas, lo que conlleva una disminución directa de la huella de carbono asociada al transporte.
+\end{itemize}
+
+\subsection{SOS3: Participación en Procesos Comunitarios}
+Esta competencia se refiere a la capacidad de colaborar y participar en la comunidad. He aplicado este principio de varias maneras. En primer lugar, mi TFG se integra en un proyecto colaborativo con una entidad pública como es el HUBU. En segundo lugar, al basar mi trabajo en el TFM y TFG de compañeros de la universidad, he participado en un proceso comunitario de creación de conocimiento dentro de mi propio grupo de investigación. He construido sobre el trabajo de otros y, a su vez, esta memoria y el código que la acompaña servirán como base para futuros estudiantes, creando una cadena de conocimiento.
+
+\subsection{SOS4: Aplicación de Principios Éticos}
+La ética profesional es un pilar fundamental de la ingeniería. En este proyecto, he tenido que tomar decisiones con implicaciones éticas claras:
+\begin{itemize}
+    \item \textbf{Privacidad y Seguridad de los Datos:} Soy consciente de que el sistema manejará datos de salud extremadamente sensibles. La decisión de pivotar hacia una implementación con HTTPS utilizando certificados de una autoridad de confianza como Let's Encrypt no es solo un requisito técnico, sino una obligación ética para garantizar la confidencialidad e integridad de la información de los pacientes.
+    \item \textbf{Licenciamiento y Conocimiento Abierto:} La decisión de publicar mi propio código bajo una licencia permisiva como la MIT responde al principio ético de compartir el conocimiento y permitir que otros puedan beneficiarse de mi trabajo, mejorarlo y adaptarlo, especialmente al tratarse de un proyecto con una clara vocación social.
+\end{itemize}
+En definitiva, este TFG ha sido para mí un ejercicio práctico de cómo la ingeniería informática puede y debe ser una herramienta para contribuir a un desarrollo más sostenible y justo.
