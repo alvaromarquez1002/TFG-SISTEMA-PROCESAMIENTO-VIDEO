@@ -11,7 +11,6 @@ services:
             - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
             - ${CONFIG}/web/load-test:/usr/share/jitsi-meet/load-test:Z
-            - ${CONFIG}/web/custom.config.js:/config/config.js:ro
         labels:
             service: "jitsi-web"
         environment:
@@ -502,6 +501,20 @@ services:
             - prosody
         networks:
             meet.jitsi:
+    
+    turn:
+        image: coturn/coturn
+        restart: unless-stopped
+        networks:
+        meet.jitsi:
+        ports:
+        - "3478:3478/udp"
+        - "3478:3478/tcp"
+        - "5349:5349/udp"
+        - "5349:5349/tcp"
+        volumes:
+        - ${CONFIG}/turn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+        - ${CONFIG}/web/letsencrypt:/etc/letsencrypt:ro
 
 # Custom network so all services can communicate using a FQDN
 networks:
