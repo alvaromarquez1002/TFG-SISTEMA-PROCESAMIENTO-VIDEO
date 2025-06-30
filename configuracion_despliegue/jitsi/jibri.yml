@@ -4,6 +4,7 @@ services:
     jibri:
         image: jitsi/jibri:${JITSI_IMAGE_VERSION:-unstable}
         restart: ${RESTART_POLICY:-unless-stopped}
+        privileged: true
         volumes:
             - ${CONFIG}/jibri:/config:Z
         shm_size: '2gb'
