@@ -1,0 +1,2 @@
+pyspark
+opencv-python-headless

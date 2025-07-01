@@ -42,6 +42,20 @@ services:
     networks:
       - processing_net
 
+  # --- Nuestro Servicio de Procesamiento en Python ---
+  python-processor:
+    build:
+      context: .
+      dockerfile: ./dockers/python_processor/Dockerfile
+    depends_on:
+      - spark-master
+      - spark-worker
+    volumes:
+      - ./process:/app/process
+      - /home/alvaro/.jitsi-meet-cfg/jibri/recordings/:/app/data
+    networks:
+      - processing_net
+
 networks:
   processing_net:
     driver: bridge

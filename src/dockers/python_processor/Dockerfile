@@ -1,20 +1,17 @@
-# 1. Imagen Base: Empezamos con una imagen oficial de Python. 
-#    'slim' es más ligera.
-FROM python:3.13-slim
+# Usamos una imagen oficial de Python como base
+FROM python:3.9-slim
 
-# 2. Directorio de Trabajo: Creamos una carpeta '/app' dentro de la imagen 
-#    y nos situamos ahí para los siguientes comandos.
+# Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. Dependencias: Copiamos el archivo de requisitos y las instalamos.
+# 1. Copiamos PRIMERO el archivo de requisitos
 COPY requirements.txt ./
+
+# 2. Instalamos las dependencias listadas en el archivo
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Copiar Código: Copiamos todo el contenido de la carpeta 'src' local 
-#    (donde está este Dockerfile) a la carpeta '/app' dentro de la imagen.
-COPY . .
+# 3. Copiamos el resto del código
+COPY ./process /app/process
 
-# 5. Comando por Defecto: Qué comando se ejecutará cuando inicie un contenedor 
-#    basado en esta imagen. Para empezar y probar, simplemente mostraremos 
-#    la versión de Python instalada dentro del contenedor.
-CMD ["python", "./main.py"]
+# 4. El comando que se ejecutará cuando el contenedor arranque
+CMD ["python", "./process/main.py"]
