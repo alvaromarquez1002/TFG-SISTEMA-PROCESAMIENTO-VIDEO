@@ -1,17 +1,25 @@
-# Usamos una imagen oficial de Python como base
-FROM python:3.9-slim
+# Usamos una imagen oficial
+FROM python:3.12-slim
 
-# Establecemos el directorio de trabajo dentro del contenedor
+# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# 1. Copiamos PRIMERO el archivo de requisitos
+# --- INSTALACIÓN DE DEPENDENCIAS ---
+# 1. Actualizamos los repositorios
+RUN apt-get update
+
+# 2. Instalamos el paquete de Java por defecto
+RUN apt-get install -y default-jre-headless && apt-get clean
+
+# 3. Copiamos el archivo de requisitos de Python
 COPY requirements.txt ./
 
-# 2. Instalamos las dependencias listadas en el archivo
+# 4. Instalamos las librerías de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3. Copiamos el resto del código
+# --- CONFIGURACIÓN DE LA APLICACIÓN ---
+# Copiamos el código de nuestro script
 COPY ./process /app/process
 
-# 4. El comando que se ejecutará cuando el contenedor arranque
+# El comando que se ejecutará cuando el contenedor arranque
 CMD ["python", "./process/main.py"]
