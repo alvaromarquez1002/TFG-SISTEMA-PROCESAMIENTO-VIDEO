@@ -1,5 +1,5 @@
-version: '3.5'
-
+# Configuracion de Jibri para Jitsi Meet
+# Este archivo es parte de la configuracion de despliegue de Jitsi Meet
 services:
     jibri:
         image: jitsi/jibri:${JITSI_IMAGE_VERSION:-unstable}
@@ -10,7 +10,7 @@ services:
         shm_size: '2gb'
         cap_add:
             - SYS_ADMIN
-        environment:
+        environment:            
             - AUTOSCALER_SIDECAR_KEY_FILE
             - AUTOSCALER_SIDECAR_KEY_ID
             - AUTOSCALER_SIDECAR_GROUP_NAME
