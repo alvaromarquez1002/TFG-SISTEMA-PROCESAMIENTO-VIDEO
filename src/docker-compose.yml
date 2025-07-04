@@ -51,8 +51,10 @@ services:
       - spark-master
       - spark-worker
     volumes:
-      - ./process:/app/process
-      - /home/alvaro/.jitsi-meet-cfg/jibri/recordings/:/app/data
+          #  - ./data:/app/data --- Modificar esta linea permite realizar pruebas con los vídeos de la carpeta data
+          # - ./data/processed:/app/data/processed -- Modificar esta linea permite realizar pruebas con los videos procesados
+      - ./process:/app/process # Mapear la carpeta de procesamiento
+      - /home/alvaro/.jitsi-meet-cfg/jibri/recordings/:/app/data # Mapear la carpeta de grabaciones de Jibri
     networks:
       - processing_net
 
