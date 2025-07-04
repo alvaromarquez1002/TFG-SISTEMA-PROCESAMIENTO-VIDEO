@@ -1,9 +1,24 @@
 from pyspark.sql import SparkSession
 import cv2 # OpenCV para procesamiento de vídeo
 import os # Manejo de archivos y directorios
+import time
+import shutil # Para mover archivos
+
 
 VIDEO_INPUT_FOLDER = "/app/data" # Carpeta de entrada donde se encuentran los vídeos sin procesar
 VIDEO_OUTPUT_FOLDER = "/app/data/processed" # Carpeta de salida donde se guardarán los vídeos procesados
+VIDEO_ARCHIVE_FOLDER = "/app/data/archived" # Carpeta donde se archivarán los vídeos originales
+
+
+# Creamos carpetas de salida y archivo al inicio para asegurar que existan
+os.makedirs(VIDEO_OUTPUT_FOLDER, exist_ok=True)
+os.makedirs(VIDEO_ARCHIVE_FOLDER, exist_ok=True)
+
+
+print("Esperando 10 segundos para que el clúster de Spark se inicie...")
+time.sleep(10)
+
+
 spark = SparkSession.builder \
     .appName("ProcesamientoVideoTFG") \
     .master("spark://spark-master:7077") \
@@ -20,6 +35,8 @@ try:
         # Excluimos la carpeta 'processed' del recorrido
         if "processed" in dirs:
             dirs.remove("processed")
+        if "archived" in dirs:
+            dirs.remove("archived")
             
         for file in files:
             if file.endswith('.mp4'):
@@ -95,6 +112,11 @@ try:
 
     cap.release()
     out.release()
+
+    # Movemos el vídeo original a la carpeta de archivados
+    archive_path = os.path.join(VIDEO_ARCHIVE_FOLDER, original_filename)
+    shutil.move(video_file_path, archive_path)
+    print(f"Vídeo original movido a: {archive_path}")
 
 except Exception as e:
     print(f"Ha ocurrido un error: {e}")

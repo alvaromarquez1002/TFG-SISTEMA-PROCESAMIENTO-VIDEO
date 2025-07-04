@@ -20,7 +20,7 @@ services:
 
   # --- Spark Master ---
   spark-master:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.5.0
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "8081:8080"
@@ -30,7 +30,7 @@ services:
 
   # --- Spark Worker ---
   spark-worker:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.5.0
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
@@ -45,15 +45,14 @@ services:
   # --- Nuestro Servicio de Procesamiento en Python ---
   python-processor:
     build:
-      context: .
-      dockerfile: ./dockers/python_processor/Dockerfile
+      context: ./dockers/python_processor
+      dockerfile: Dockerfile
+    command: python main.py
     depends_on:
       - spark-master
       - spark-worker
     volumes:
           #  - ./data:/app/data --- Modificar esta linea permite realizar pruebas con los vídeos de la carpeta data
-          # - ./data/processed:/app/data/processed -- Modificar esta linea permite realizar pruebas con los videos procesados
-      - ./process:/app/process # Mapear la carpeta de procesamiento
       - /home/alvaro/.jitsi-meet-cfg/jibri/recordings/:/app/data # Mapear la carpeta de grabaciones de Jibri
     networks:
       - processing_net

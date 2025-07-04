@@ -62,3 +62,6 @@ Este proyecto tiene dos flujos de trabajo principales:
 
 4.  **Comprobar el Resultado:**
     * Una vez finalizado el script, el vídeo procesado aparecerá en la subcarpeta `/processed` dentro del directorio de entrada. Por ejemplo, si estás en modo integrado, lo encontrarás en: `/home/alvaro/.jitsi-meet-cfg/jibri/recordings/processed/`.
+
+5.  **Mover los videos ya procesados:**
+    * Una vez finalizado el script el video original procesado se mueve a la carpeta `/home/alvaro/.jitsi-meet-cfg/jibri/recordings/archived/` para que la proxima vez que se ejecute el script no pueda volver a analizar ese mismo video cada vez ya que siempre sera el video mas antiguo.

@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # --- CONFIGURACIÓN DE LA APLICACIÓN ---
 # Copiamos el código de nuestro script
-COPY ./process /app/process
+COPY main.py .
 
 # El comando que se ejecutará cuando el contenedor arranque
-CMD ["python", "./process/main.py"]
+CMD ["python", "main.py"]
