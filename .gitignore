@@ -201,6 +201,7 @@ cython_debug/
 
 # Ignorar todos los vídeos de la carpeta de datos
 /src/data/*.mp4
-
 # Ignorar todos los vídeos de la carpeta de procesados
 /src/data/processed/*.mp4
+# Ignorar todos los vídeos de la carpeta de archivados
+/src/data/archived
