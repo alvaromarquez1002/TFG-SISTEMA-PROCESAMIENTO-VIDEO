@@ -1,2 +1,3 @@
 pyspark
 opencv-python-headless
+kafka-python
