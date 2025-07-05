@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.2.0">
+  <diagram name="Página-1" id="0CcUjBbd1h5gzMMPx8_0">
+    <mxGraphModel dx="1584" dy="826" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-22" value="Fase 3: Codificación y Empaquetado" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1272" width="330" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-23" value="Fase 2: Renderizado y Captura (Dentro del Contenedor Jibri)" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="110" y="798" width="330" height="424" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-24" value="Fase 1: Conexión y Autenticación" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="110" y="220" width="330" height="328" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-25" value="1. Señal de Inicio&#xa;Jicofo (Gestor de Conferencias)&#xa;ordena a Jibri iniciar grabación" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="20" width="260" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-26" value="2. Autenticación XMPP&#xa;Jibri se conecta y autentica&#xa;con el servidor Prosody" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="146" y="260" width="259" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-27" value="3. Unión a la Sala&#xa;Jibri se une a la conferencia&#xa;y al Videobridge (JVB)" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="397" width="260" height="126" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-28" value="4. Recepción de Flujos&#xa;El JVB envía a Jibri los flujos&#xa;de audio y vídeo RTP de cada participante" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="598" width="260" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-29" value="5. Renderizado en Navegador&#xa;Chrome Headless recibe y renderiza&#xa;todos los flujos" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="146" y="840" width="260" height="174" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-30" value="6. Captura de la Salida&#xa;El Escritorio Virtual (Xvfb) y el&#xa;Loopback de Audio capturan la señal" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="1047" width="260" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-31" value="7. Proceso de FFmpeg&#xa;Los flujos en bruto capturados&#xa;se envían a FFmpeg" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="146" y="1320" width="260" height="126" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-32" value="8. Transformación y Multiplexado&#xa;FFmpeg codifica y empaqueta&#xa;los flujos en un único contenedor MP4" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="1473" width="260" height="174" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-33" value="9. Resultado Final&#xa;Se genera el archivo &#39;video.mp4&#39;&#xa;en el volumen de almacenamiento" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="145" y="1722" width="260" height="174" as="geometry" />
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-34" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-26" target="9qaXE7Aq6Uxo68Rjx3S1-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-35" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-29" target="9qaXE7Aq6Uxo68Rjx3S1-30">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-36" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-31" target="9qaXE7Aq6Uxo68Rjx3S1-32">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-37" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-25" target="9qaXE7Aq6Uxo68Rjx3S1-26">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-38" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-27" target="9qaXE7Aq6Uxo68Rjx3S1-28">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-39" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-28" target="9qaXE7Aq6Uxo68Rjx3S1-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-40" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-30" target="9qaXE7Aq6Uxo68Rjx3S1-31">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9qaXE7Aq6Uxo68Rjx3S1-41" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fillColor=#bac8d3;strokeColor=#23445d;" edge="1" parent="1" source="9qaXE7Aq6Uxo68Rjx3S1-32" target="9qaXE7Aq6Uxo68Rjx3S1-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

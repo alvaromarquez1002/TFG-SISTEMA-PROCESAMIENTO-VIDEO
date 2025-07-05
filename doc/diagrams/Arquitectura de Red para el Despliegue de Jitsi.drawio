@@ -1,0 +1,82 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.2.0">
+  <diagram name="Página-1" id="cS9jrzsWTu9cpDGeQhlx">
+    <mxGraphModel dx="2037" dy="2230" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="M0bSaitch4XI6vg_5ows-1" value="Red Local del Servidor" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="964" y="-807" width="1189" height="452" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-2" value="Entorno Docker en Host Debian" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1488" y="-750" width="640" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-3" value="Configuración del Router" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1513" y="-567" width="590" height="177" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-4" value="Cliente DuckDNS:&#xa;Actualiza la IP Pública" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="M0bSaitch4XI6vg_5ows-3">
+          <mxGeometry x="43" y="58" width="219" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-5" value="Redirección de Puertos:&#xa;Externo 80 ; Interno 80&#xa;Externo 443 ; Interno 443" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="M0bSaitch4XI6vg_5ows-3">
+          <mxGeometry x="312" y="46" width="251" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-6" value="Internet" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="603" y="-814" width="306" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-7" value="Ubicación Remota" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="328" y="-814" width="221" height="276" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-8" value="Cliente Externo&#xa;(Móvil, PC)" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="353" y="-779" width="171" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-9" value="Servidores de&#xa;Let&#39;s Encrypt" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="361" y="-651" width="156" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-10" value="&#xa;alvaro-tfg-jitsi.duckdns.org&#xa;" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="628" y="-779" width="256" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-11" value="Router Doméstico" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="989" y="-703" width="186" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-12" value="Host Debian&#xa;IP Fija: 192.168.1.18" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1229" y="-715" width="209" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-13" value="Contenedor Jitsi&#xa;(Servidor Web Nginx)" style="whiteSpace=wrap;strokeWidth=2;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1703" y="-715" width="210" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-14" value="1. Petición HTTPS a dominio público" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;fillColor=#fa6800;strokeColor=#C73500;fontSize=13;labelBackgroundColor=none;" edge="1" parent="1" source="M0bSaitch4XI6vg_5ows-8" target="M0bSaitch4XI6vg_5ows-10">
+          <mxGeometry x="-0.1538" y="54" relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-15" value="2. DNS apunta a IP Pública" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0.23;entryY=0;rounded=0;fillColor=#fa6800;strokeColor=#C73500;fontSize=13;labelBackgroundColor=none;" edge="1" parent="1" source="M0bSaitch4XI6vg_5ows-10" target="M0bSaitch4XI6vg_5ows-11">
+          <mxGeometry x="0.0887" y="19" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="964" y="-740" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-16" value="4. Redirige tráfico" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;fillColor=#fa6800;strokeColor=#C73500;fontSize=13;labelBackgroundColor=none;" edge="1" parent="1" source="M0bSaitch4XI6vg_5ows-11" target="M0bSaitch4XI6vg_5ows-12">
+          <mxGeometry x="-1" y="-45" relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="-17" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-17" value="" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;fillColor=#fa6800;strokeColor=#C73500;" edge="1" parent="1" source="M0bSaitch4XI6vg_5ows-12" target="M0bSaitch4XI6vg_5ows-13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="M0bSaitch4XI6vg_5ows-18" value="3. Validación HTTP-01 (Puerto 80)" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0.23;entryY=1;rounded=0;fillColor=#fa6800;strokeColor=#C73500;fontSize=13;labelBackgroundColor=none;" edge="1" parent="1" source="M0bSaitch4XI6vg_5ows-9" target="M0bSaitch4XI6vg_5ows-11">
+          <mxGeometry x="-0.0042" y="-18" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="964" y="-612" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
