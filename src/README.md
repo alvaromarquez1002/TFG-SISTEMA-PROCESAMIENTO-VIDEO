@@ -65,3 +65,5 @@ Este proyecto tiene dos flujos de trabajo principales:
 
 5.  **Mover los videos ya procesados:**
     * Una vez finalizado el script el video original procesado se mueve a la carpeta `/home/alvaro/.jitsi-meet-cfg/jibri/recordings/archived/` para que la proxima vez que se ejecute el script no pueda volver a analizar ese mismo video cada vez ya que siempre sera el video mas antiguo.
+
+Para una descripcion mas detallada consultar los manuales y demas documentacion
