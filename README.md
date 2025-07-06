@@ -28,7 +28,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 
 ## Diagrama de Arquitectura General
 
-![Diagrama de la Arquitectura General del Sistema](./doc/images/arquitectura-general.svg)
+<img src="./doc/images/arquitectura-general.svg" alt="Diagrama de Arquitectura General" height="650"/>
 
 ---
 
@@ -104,7 +104,7 @@ Esta fase pone en marcha el servidor de videoconferencias y el servicio de graba
 
 7.  **Verificación:** Accede a tu dominio público (`https://<tu-dominio>`) desde un dispositivo externo y prueba a iniciar una grabación. El vídeo se guardará en `~/.jitsi-meet-cfg/jibri/recordings/`.
 
-    ![Captura de la instancia de Jitsi Meet funcional](./doc/images/jitsi-funcional.jpg)
+    <img src="./doc/images/jitsi-funcional.jpg" alt="Captura de Jitsi funcional" height="650"/>
 
 ### Fase 2: Despliegue del Pipeline de Procesamiento
 
