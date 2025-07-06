@@ -1,28 +1,34 @@
 \chapter{Conclusiones y Líneas de trabajo futuras}
 \label{chap:conclusiones}
 
-Para finalizar esta memoria, en este capítulo se presentan, por una parte, las conclusiones principales que he extraído del desarrollo del proyecto y, por otra, las posibles líneas de trabajo futuras que se abren a partir de la infraestructura implementada.
+Para finalizar esta memoria, en este capítulo se presentan, por una parte, las conclusiones principales que se han podido extraer del desarrollo del proyecto y, por otra, las posibles líneas de trabajo futuras que se abren a partir de la infraestructura implementada.
 
 \section{Conclusiones}
 
-La realización de este TFG me ha permitido obtener una serie de conclusiones tanto a nivel técnico como a nivel de gestión y desarrollo de un proyecto de ingeniería de software.
+La realización de este TFG ha permitido obtener una serie de conclusiones tanto a nivel técnico como a nivel de gestión y desarrollo de un proyecto de ingeniería de software.
 
-Como primera conclusión, y una de las más importantes, he podido constatar que la \textbf{elección del entorno de desarrollo es crítica} en proyectos que involucran múltiples servicios de red y sistemas de ficheros, como es este caso. El intento inicial de despliegue sobre Windows con WSL2, aunque teóricamente viable, demostró ser una fuente de problemas de compatibilidad (especialmente de permisos y redes) muy difíciles de diagnosticar y resolver. El pivote estratégico a un entorno Linux nativo (Debian 12) fue una decisión fundamental que no solo solucionó los problemas, sino que validó la importancia de trabajar sobre un sistema operativo estándar en entornos de servidor para garantizar la estabilidad y la reproducibilidad.
+Como primera conclusión, y una de las más importantes, se ha podido constatar que la \textbf{elección del entorno de desarrollo es crítica} en proyectos que involucran múltiples servicios de red y sistemas de ficheros, como es este caso. El intento inicial de despliegue sobre Windows con WSL2, aunque teóricamente viable, demostró ser una fuente de problemas de compatibilidad (especialmente de permisos y redes) muy difíciles de diagnosticar y resolver. El pivote estratégico a un entorno Linux nativo (Debian 12) fue una decisión fundamental que no solo solucionó los problemas, sino que validó la importancia de trabajar sobre un sistema operativo estándar en entornos de servidor para garantizar la estabilidad y la reproducibilidad.
 
-En segundo lugar, he logrado el objetivo principal de diseñar e implementar una \textbf{arquitectura de datos robusta y escalable}, sentando las bases para un sistema de telerehabilitación mucho más potente que el del proyecto original. La integración de Jitsi, Docker, Kafka y Spark conforma un pipeline de datos modular y desacoplado, que es el estándar de facto en la industria para este tipo de aplicaciones. Aunque la implementación final se ha centrado en un flujo offline, la arquitectura está preparada para evolucionar hacia el procesamiento en tiempo real.
+En segundo lugar, se ha logrado el objetivo principal de diseñar e implementar una \textbf{arquitectura de datos robusta y escalable}, sentando las bases para un sistema de telerehabilitación mucho más potente que el del proyecto original. La integración de Jitsi, Docker, Kafka y Spark conforma un pipeline de datos modular y desacoplado, que es el estándar de facto en la industria para este tipo de aplicaciones. Aunque la implementación final se ha centrado en un flujo \textit{offline}, la arquitectura está preparada para evolucionar hacia el procesamiento en tiempo real.
 
-Finalmente, una gran parte del trabajo de ingeniería de este TFG no ha sido la programación de algoritmos complejos, sino la \textbf{integración, configuración y depuración} de múltiples tecnologías de código abierto. Enfrentarme a logs de errores, diagnosticar problemas de red con herramientas como \texttt{openssl}, y comprender las complejas interacciones entre los distintos contenedores ha sido un aprendizaje práctico inmenso y una parte tan valiosa como el propio desarrollo de código.
+Finalmente, una gran parte del trabajo de ingeniería de este TFG no ha sido la programación de algoritmos complejos, sino la \textbf{integración, configuración y depuración} de múltiples tecnologías de código abierto. Enfrentarme a \textit{logs} de errores, diagnosticar problemas de red con herramientas como \texttt{openssl}, y comprender las complejas interacciones entre los distintos contenedores ha sido un aprendizaje práctico inmenso y una parte tan valiosa como el propio desarrollo de código.
+
+\subsection{Conclusiones Personales}
+A nivel personal, este Trabajo de Fin de Grado ha supuesto un desafío considerable y, a su vez, una experiencia de aprendizaje inmensamente valiosa. Me ha permitido aplicar los conocimientos teóricos del Grado y los obtenidos por otro medios a un problema real y complejo, enfrentándome a las dificultades que surgen fuera del entorno académico. La necesidad de investigar, diagnosticar errores y tomar decisiones estratégicas para reconducir el proyecto me ha proporcionado una visión práctica de la ingeniería de software que considero fundamental para mi futuro profesional.
 
 \section{Líneas de trabajo futuras}
 
-El sistema implementado en este TFG es una base sólida sobre la que se pueden construir numerosas mejoras y nuevas funcionalidades. A continuación, detallo algunas de las líneas de trabajo futuras más interesantes:
+El sistema implementado en este TFG es una base sólida sobre la que se pueden construir numerosas mejoras y nuevas funcionalidades. A continuación, se detallan algunas de las líneas de trabajo futuras más interesantes:
 
 \begin{enumerate}
-    \item \textbf{Implementar el Pipeline de Streaming en Tiempo Real:} El siguiente paso natural sería evolucionar del procesamiento por lotes (batch) al procesamiento en tiempo real. Esto implicaría configurar Jibri para que emita un flujo de vídeo usando el protocolo RTMP, e implementar un consumidor en Spark Streaming que procese los fotogramas a medida que llegan a través de Kafka.
+    \item \textbf{Implementar el \textit{Pipeline} de \textit{Streaming} en Tiempo Real:} El siguiente paso natural sería evolucionar del procesamiento por lotes (\textit{batch}) al procesamiento en tiempo real. Esto implicaría configurar Jibri para que emita un flujo de vídeo usando el protocolo RTMP, e implementar un consumidor en Spark \textit{Streaming} que procese los fotogramas a medida que llegan a través de Kafka.
     
-    \item \textbf{Integración con los Algoritmos de Análisis de Movimiento:} Conectar este pipeline de datos con los algoritmos de análisis de esqueletos y DTW desarrollados en los trabajos previos (TFM-FIS-IA y el TFG de Lucía Núñez Calvo). Esto permitiría crear un sistema completo que capture, procese y evalúe los ejercicios de forma totalmente automatizada.
+    \item \textbf{Integración con los Algoritmos de Análisis de Movimiento:} Conectar este \textit{pipeline} de datos con los algoritmos de análisis de esqueletos y DTW desarrollados en los trabajos previos (TFM-FIS-IA y el TFG de Lucía Núñez Calvo). Esto permitiría crear un sistema completo que capture, procese y evalúe los ejercicios de forma totalmente automatizada.
     
     \item \textbf{Escalabilidad y Orquestación Avanzada:} Aunque Docker Compose es ideal para el desarrollo, para un entorno de producción se podría migrar la arquitectura a un orquestador de contenedores más avanzado como \textbf{Kubernetes}. Esto permitiría un escalado automático de los componentes (por ejemplo, añadir más workers de Spark o más instancias de Jibri si hay muchas sesiones concurrentes).
     
-    \item \textbf{Monitorización del Sistema:} Desplegar una pila de monitorización (por ejemplo, con \textit{Prometheus} y \textit{Grafana}) para obtener métricas en tiempo real del estado de los brokers de Kafka, los trabajos de Spark y el resto de los servicios, asegurando la salud y el rendimiento del sistema.
+    \item \textbf{Monitorización del Sistema:} Desplegar una pila de monitorización (por ejemplo, con Prometheus y Grafana) para obtener métricas en tiempo real del estado de los brokers de Kafka, los trabajos de Spark y el resto de los servicios, asegurando la salud y el rendimiento del sistema.
+
+    \item \textbf{Mejora de la Captura de Vídeo y Audio:} Investigar y optimizar la calidad de la fuente de datos. Esto podría incluir pruebas con diferentes configuraciones de \textit{códecs} en Jibri, el uso de cámaras de mayor resolución, o la exploración de configuraciones de audio avanzadas para garantizar que la materia prima para el análisis sea de la máxima calidad posible.
+    
 \end{enumerate}

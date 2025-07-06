@@ -1,43 +1,50 @@
-
 \chapter{Técnicas y herramientas}
 \label{chap:tecnicas_herramientas}
 
-En este capítulo describo las principales tecnologías, lenguajes de programación y herramientas que han constituido la base para el desarrollo de mi Trabajo de Fin de Grado. Mi elección de cada una de ellas responde a las necesidades específicas de construir una infraestructura de procesamiento de vídeo que fuera robusta, escalable y reproducible.
+En este capítulo se describen en detalle las principales tecnologías, lenguajes de programación y herramientas que han constituido la base para el desarrollo de este Trabajo de Fin de Grado. El objetivo de esta sección es presentar cada componente de forma objetiva, explicando su función, características y arquitectura principal.
 
 \section{Herramientas de Desarrollo y Gestión}
 \label{sec:herramientas_desarrollo}
 
 \subsection{Python}
-El lenguaje principal que he utilizado para desarrollar la lógica del proyecto ha sido \textbf{Python} \cite{python_software_foundation}. Lo elegí por su sintaxis clara, que facilita un desarrollo rápido, y por su enorme ecosistema de librerías, especialmente en el ámbito del procesamiento de datos, lo que lo hace ideal para integrarse con las tecnologías de Big Data que necesitaba para mi TFG.
+Python es un lenguaje de programación de alto nivel, interpretado y multiparadigma, cuya filosofía de diseño enfatiza la legibilidad del código \cite{python_software_foundation}. Es mantenido por la Python Software Foundation y cuenta con una vasta biblioteca estándar y un ecosistema de librerías de terceros que lo han convertido en un estándar de facto en el desarrollo de aplicaciones, la ciencia de datos y el \textit{machine learning}.
 
 \subsection{Jira y Metodología Ágil}
-Para gestionar el proyecto, decidí emplear un enfoque ágil basado en \textbf{Scrum} \cite{trigas2012metodologia}, utilizando \textbf{Jira} \cite{atlassian_jira} como herramienta de soporte. Esta metodología me ha permitido organizar el trabajo en Épicas y Sprints, mantener un backlog de tareas actualizado y visualizar el progreso en un tablero Kanban. Este enfoque ha sido fundamental para poder adaptarme a los imprevistos y a los desafíos técnicos que surgieron, manteniendo siempre un seguimiento claro del trabajo realizado.
-
-\subsection{Git y GitHub}
-Para el control de versiones he utilizado \textbf{Git}, y he alojado el proyecto en un repositorio privado en \textbf{GitHub}. Esta práctica ha sido esencial para mantener un historial de cambios detallado, trabajar de forma segura y asegurar la integridad de todo el código y la documentación.
+Jira es una herramienta de software desarrollada por Atlassian para el seguimiento de incidencias y la gestión de proyectos \cite{atlassian_jira}. Está diseñada para dar soporte a metodologías de desarrollo ágil como Scrum, que se basa en la organización del trabajo en iteraciones cortas denominadas Sprints. Jira facilita la gestión de un \textit{backlog} de tareas, la planificación de Sprints y la visualización del flujo de trabajo mediante tableros Kanban.
 
 \section{Infraestructura y Pipeline de Datos}
 \label{sec:herramientas_infraestructura}
-El núcleo del proyecto reside en la infraestructura que he diseñado para capturar, transportar y procesar los datos de vídeo.
-
-\subsection{Sistema Operativo Base: Debian 12}
-Tras encontrar numerosos problemas de compatibilidad y permisos en Windows con WSL2, tomé la decisión de migrar todo el entorno de desarrollo a un sistema operativo Linux nativo. La elección fue \textbf{Debian 12}, principalmente por su reconocida estabilidad y por ser un estándar en entornos de servidor, lo que me garantizaba un comportamiento más predecible de las herramientas de red y de Docker.
+El núcleo del proyecto reside en la infraestructura diseñada para capturar, transportar y procesar los datos de vídeo.
 
 \subsection{Contenerización con Docker y Docker Compose}
-Desde el principio tuve claro que la contenerización era necesaria para este proyecto. He utilizado \textbf{Docker} \cite{docker_docs} para empaquetar cada servicio (Kafka, Zookeeper, mi aplicación Python) en contenedores aislados. Esto garantiza que el entorno sea reproducible y evita los clásicos problemas de dependencias entre distintas máquinas.
+Docker es una plataforma de código abierto que automatiza el despliegue de aplicaciones dentro de contenedores \cite{docker_docs}. Un contenedor es una unidad de software estándar, ligera y ejecutable que incluye todo lo necesario para que una aplicación se ejecute: código, \textit{runtime}, herramientas del sistema y librerías. A diferencia de las máquinas virtuales, los contenedores comparten el kernel del sistema operativo anfitrión, lo que los hace mucho más eficientes en el uso de recursos. La gestión de contenedores se realiza a través de un \textbf{Dockerfile}, un fichero de texto que contiene las instrucciones para construir una imagen de contenedor.
 
-Para orquestar todos estos contenedores, he usado \textbf{Docker Compose}. Mediante un único archivo \texttt{docker-compose.yml}, he podido definir toda la arquitectura de la aplicación, incluyendo la red que los conecta y las dependencias de arranque, lo que ha simplificado enormemente el despliegue y las pruebas del sistema completo.
+Para la orquestación de los múltiples contenedores de este proyecto, se utiliza \textbf{Docker Compose}. Esta herramienta permite definir y gestionar aplicaciones multi-contenedor a través de un único archivo de configuración en formato YAML (\texttt{docker-compose.yml}). En este fichero se definen los diferentes servicios que componen la aplicación, sus imágenes, las redes que los conectan, los volúmenes de datos para la persistencia y las dependencias de arranque entre ellos.
 
-\subsection{Captura de Vídeo: Jitsi y Jibri}
-Como fuente de los datos de vídeo he utilizado la plataforma de código abierto \textbf{Jitsi} \cite{JitsiJibriDocs}. En concreto, el componente clave para mi proyecto es \textbf{Jibri} (Jitsi Broadcasting Infrastructure). Su función es unirse a una conferencia y grabarla en un archivo de vídeo \textbf{MP4}, que se convierte en el dato de entrada para mi pipeline de procesamiento. Elegí Jitsi por ser una solución completa y gratuita que me proporcionaba la funcionalidad de captura que necesitaba.
-
-\subsection{Pipeline de Datos: Apache Kafka y Apache Spark}
-La arquitectura de procesamiento se basa en un pipeline de datos en streaming.
+\subsection{Plataforma de Videoconferencia: Jitsi}
+Jitsi es una colección de proyectos de software libre para construir soluciones de videoconferencia seguras y escalables \cite{JitsiJibriDocs}. Su arquitectura es distribuida y se compone de varios microservicios que trabajan de forma coordinada:
 \begin{itemize}
-    \item \textbf{Apache Kafka} \cite{KafkaWebDoc}: En mi arquitectura, Kafka actúa como un sistema intermediario que desacopla el sistema de captura del de procesamiento. Su función es recibir los datos de Jibri de forma fiable y almacenarlos en \textit{topics} hasta que Spark esté listo para consumirlos. Lo escogí por su alta capacidad para manejar grandes volúmenes de datos y su tolerancia a fallos.
-    \item \textbf{Apache Spark} \cite{SparkWebDoc}: Para el análisis del vídeo, la herramienta seleccionada es Spark. Su principal ventaja para mi TFG es su potente motor de procesamiento distribuido y su flexibilidad para trabajar tanto con datos en streaming como con archivos estáticos (batch). He utilizado su API de Python, \textbf{PySpark}, para desarrollar los scripts de procesamiento.
+    \item \textbf{Jitsi Meet:} Es la aplicación cliente, una interfaz web basada en JavaScript y WebRTC que se ejecuta en el navegador del usuario y le permite participar en las conferencias.
+    \item \textbf{Jitsi Videobridge (JVB):} Es el componente central. Funciona como una Unidad de Reenvío Selectivo (SFU), lo que significa que recibe los flujos de vídeo de cada participante y los reenvía de forma selectiva al resto, sin necesidad de decodificarlos y mezclarlos. Esta arquitectura es clave para la eficiencia y escalabilidad del sistema.
+    \item \textbf{Prosody:} Es el servidor \textit{XMPP} que gestiona la señalización en las conferencias: quién entra o sale de una sala, el estado de los participantes, los mensajes de chat, etc.
+    \item \textbf{Jicofo (Jitsi Conference Focus):} Actúa como el "director de orquesta" de las conferencias. Es el componente que gestiona las sesiones, invita a los nuevos participantes (incluido Jibri) a la conferencia y asigna los flujos de vídeo al Jitsi Videobridge.
+    \item \textbf{Jibri (Jitsi Broadcasting Infrastructure):} Es el componente utilizado en este TFG para la captura de datos. Jibri es un servicio que se une a una conferencia como un participante silencioso, lanza una instancia de un navegador Chrome en un servidor virtual (\textit{headless}) y utiliza FFmpeg para capturar y grabar la vista compuesta de la conferencia en un archivo de vídeo estándar (formato MP4).
 \end{itemize}
 
-\section{Herramientas de Documentación}
-\subsection{\LaTeX{} y Overleaf}
-Para la redacción de esta memoria, he utilizado el sistema de composición de textos \textbf{\LaTeX{}} \cite{wiki:latex} por la alta calidad profesional de sus resultados. Todo el trabajo de redacción lo he realizado sobre \textbf{Overleaf}, un editor en línea que facilita enormemente la escritura y compilación de documentos \LaTeX{} sin necesidad de instalaciones locales.
+\subsection{Plataformas de Big Data: Kafka y Spark}
+\subsubsection{Apache Kafka: Un Log de Transacciones Distribuido}
+Apache Kafka es una plataforma distribuida de código abierto para la transmisión de eventos (\textit{event streaming}) \cite{KafkaWebDoc}. Aunque a menudo se utiliza como un sistema de mensajería publicar-suscribir, su arquitectura fundamental es la de un \textbf{log de transacciones distribuido, particionado y replicado}. Los conceptos clave de su arquitectura son:
+\begin{itemize}
+    \item \textbf{Brokers y Clúster:} Kafka se ejecuta como un clúster de uno o más servidores, denominados \textit{brokers}. Estos brokers gestionan el almacenamiento y la atención a las peticiones de los clientes.
+    \item \textbf{Topics y Particiones:} Los flujos de eventos se organizan en categorías llamadas \textit{topics}. Para permitir el paralelismo y la escalabilidad, cada topic se divide en una o más \textit{particiones}. Cada partición es un log ordenado e inmutable al que solo se pueden añadir nuevos registros.
+    \item \textbf{Productores y Consumidores:} Las aplicaciones que escriben datos en los topics de Kafka se denominan \textit{Productores}. Las que leen los datos son los \textit{Consumidores}, que se organizan en grupos para procesar los datos de forma paralela.
+    \item \textbf{Modo KRaft (sin Zookeeper):} Las versiones modernas de Kafka, como la utilizada en este proyecto, pueden operar en modo KRaft (Kafka Raft). En este modo, Kafka utiliza un protocolo de consenso interno para gestionar los metadatos del clúster, eliminando la necesidad de un sistema de coordinación externo como Apache Zookeeper y simplificando así significativamente la arquitectura de despliegue.
+\end{itemize}
+
+\subsubsection{Apache Spark: Un Motor de Computación Distribuida}
+Apache Spark es un motor de análisis unificado para el procesamiento de datos a gran escala \cite{SparkWebDoc}. Su principal característica es su capacidad para realizar computación distribuida en memoria, lo que le permite alcanzar un alto rendimiento. Su arquitectura se compone de:
+\begin{itemize}
+    \item \textbf{Driver y Executors:} Una aplicación Spark consiste en un proceso \textit{driver} que coordina la ejecución y múltiples procesos \textit{executor} que se ejecutan en los nodos de un clúster. El driver analiza el código, planifica las tareas y las envía a los \textit{executors} para que las ejecuten en paralelo sobre los datos.
+    \item \textbf{DataFrames y el Optimizador Catalyst:} La API principal de Spark es el DataFrame, una abstracción de datos distribuidos organizados en columnas con nombre. Cuando se ejecutan operaciones sobre un \textit{DataFrame}, el optimizador de Spark, llamado \textbf{Catalyst}, traduce estas operaciones a un plan lógico, lo optimiza y genera un plan físico de ejecución que se distribuye por el clúster.
+    \item \textbf{PySpark:} Es la API de Python para Spark, que permite a los desarrolladores utilizar la potencia de Spark con la simplicidad y el amplio ecosistema de librerías de Python.
+\end{itemize}

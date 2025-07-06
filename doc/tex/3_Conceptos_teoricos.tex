@@ -1,81 +1,71 @@
 \chapter{Conceptos Teóricos}
 \label{chap:conceptos}
 
-Para comprender las decisiones de diseño y la implementación de la infraestructura de este TFG, es necesario primero asentar las bases teóricas sobre las que se construyen las tecnologías seleccionadas. Este capítulo profundiza en los paradigmas y arquitecturas clave del procesamiento de datos distribuidos, el streaming de vídeo y los conceptos de red y seguridad que han sido el núcleo de este proyecto.
+Para comprender las decisiones de diseño y la implementación de la infraestructura de este TFG, es necesario primero asentar las bases teóricas sobre las que se construyen las tecnologías seleccionadas. Este capítulo profundiza en los paradigmas y arquitecturas clave del procesamiento de datos distribuidos, el streaming de vídeo y los conceptos de red y seguridad que son el núcleo de este proyecto.
 
-\section{Paradigmas de la Arquitectura}
+\section{Paradigmas de Arquitecturas Distribuidas}
 \label{sec:conceptos_arquitecturas}
-El sistema desarrollado en este TFG es, en esencia, un sistema distribuido. En lugar de una única aplicación monolítica, se compone de múltiples servicios independientes que necesitan comunicarse y coordinarse de manera eficiente. Los siguientes paradigmas han sido fundamentales para su diseño.
+Un sistema distribuido se compone de múltiples componentes de software autónomos, ejecutándose en diferentes nodos, que se comunican y coordinan entre sí para cumplir un objetivo común. El diseño de este tipo de sistemas se basa en una serie de patrones y paradigmas que garantizan su eficiencia, escalabilidad y tolerancia a fallos.
 
 \subsection{Sistemas de Mensajería: El Modelo Publicar-Suscribir}
-El modelo de comunicación Publicar-Suscribir es un patrón de mensajería asíncrono. En él, las aplicaciones que envían mensajes, llamadas \textbf{productores}, no los envían directamente a los receptores, sino que los publican en canales lógicos llamados \textbf{tópicos}. Por otro lado, las aplicaciones que reciben los mensajes, llamadas \textbf{consumidores}, se suscriben a los tópicos de su interés para recibirlos.
+El modelo de comunicación Publicar-Suscribir (o \textit{Pub-Sub}) es un patrón de mensajería asíncrono donde las aplicaciones que envían mensajes, llamadas \textbf{productores} (\textit{publishers}), no los envían directamente a los receptores. En su lugar, los publican en canales o categorías lógicas, conocidas como \textbf{tópicos} (\textit{topics}), gestionados por un intermediario o \textit{broker}. Por otro lado, las aplicaciones que reciben los mensajes, llamadas \textbf{consumidores} (\textit{subscribers}), se suscriben a los tópicos de su interés para recibir los mensajes que se publican en ellos \cite{birman2007guide}.
 
-La principal ventaja de este patrón, y la razón por la que lo he aplicado en mi proyecto, es el \textbf{desacoplamiento} que introduce entre los componentes. El sistema de captura de vídeo (Jibri) puede publicar datos sin necesidad de saber cuántos sistemas de procesamiento hay, dónde están ubicados o si están disponibles en ese momento. Esto dota a la arquitectura de una enorme flexibilidad y escalabilidad.
+La principal ventaja de este patrón es el \textbf{desacoplamiento} que introduce entre los componentes. Los productores no necesitan conocer a los consumidores, y viceversa. Esto permite que los sistemas escalen de forma independiente y que nuevos componentes puedan añadirse a la arquitectura sin necesidad de modificar los existentes, dota a la arquitectura de una enorme flexibilidad y escalabilidad \cite{kleppmann2017designing}.
 
-\subsection{Procesamiento de Datos: Batch vs. Streaming}
-El análisis de datos puede abordarse de dos maneras principales:
+\subsection{Virtualización a Nivel de Sistema Operativo}
+La virtualización es una técnica que permite crear versiones virtuales de recursos informáticos. Mientras que las máquinas virtuales tradicionales emulan un sistema de hardware completo sobre el que se ejecuta un sistema operativo invitado, la \textbf{virtualización a nivel de sistema operativo}, más conocida como contenerización, sigue un enfoque diferente.
+
+Los contenedores se ejecutan sobre el kernel del sistema operativo anfitrión, pero en espacios de usuario aislados. Cada contenedor tiene su propio sistema de ficheros, procesos y configuración de red, pero comparte el mismo kernel subyacente. Esto los hace extremadamente ligeros, rápidos de iniciar y mucho más eficientes en el uso de recursos que las máquinas virtuales, convirtiéndolos en la tecnología ideal para desplegar arquitecturas de microservicios.
+
+\section{Fundamentos de Tecnologías de Streaming}
+\label{sec:conceptos_streaming}
+
+\subsection{El Log de Transacciones Distribuido e Inmutable}
+Una de las arquitecturas más potentes para construir sistemas de mensajería y plataformas de \textit{streaming} de datos es el \textbf{log de transacciones distribuido} (o \textit{commit log}). Conceptualmente, es una estructura de datos inmutable a la que solo se pueden añadir registros. Una vez escrito, un registro no puede ser modificado ni eliminado.
+
+En un sistema distribuido, este log se divide en \textbf{particiones} para permitir el paralelismo y la escalabilidad. Cada partición es un log ordenado que se replica a través de múltiples servidores (\textbf{brokers}) para garantizar la tolerancia a fallos y la alta disponibilidad. Cada registro en una partición tiene un identificador secuencial único llamado \textbf{offset}, que permite a los consumidores llevar un control preciso de su posición de lectura, incluso en caso de fallos. Este modelo es la base de sistemas de mensajería de alto rendimiento capaces de procesar millones de eventos por segundo.
+
+\subsection{Modelo de Computación Distribuida en Memoria}
+El procesamiento de grandes volúmenes de datos (\textit{Big Data}) requiere modelos de computación que puedan paralelizar el trabajo a través de un clúster de máquinas. La abstracción fundamental en los motores de procesamiento modernos es el \textbf{Conjunto de Datos Distribuido y Resiliente} (\textit{Resilient Distributed Dataset} o RDD). Un RDD es una colección de elementos inmutable y tolerante a fallos que puede ser procesada en paralelo \cite{zaharia2012resilient}.
+
+Las operaciones sobre estos datos se dividen en:
 \begin{itemize}
-    \item \textbf{Procesamiento por Lotes (Batch):} Consiste en procesar grandes volúmenes de datos que han sido almacenados previamente. Es eficiente para grandes cantidades de datos donde la latencia no es crítica.
-    \item \textbf{Procesamiento de Flujos (Streaming):} Se centra en procesar los datos a medida que se generan, en secuencias continuas e ilimitadas. Es ideal para aplicaciones que requieren una respuesta en tiempo real.
+    \item \textbf{Transformaciones:} Operaciones que crean un nuevo conjunto de datos a partir de uno existente (ej. un filtrado). Son "perezosas" (\textit{lazy}), es decir, su cómputo no se realiza al momento.
+    \item \textbf{Acciones:} Operaciones que disparan la ejecución de las transformaciones y devuelven un resultado o escriben en un sistema externo.
 \end{itemize}
-Mi proyecto se centra inicialmente en un flujo \textit{offline} (procesamiento batch de archivos MP4), pero la arquitectura se ha diseñado con los principios del streaming en mente, utilizando herramientas que soportan ambos paradigmas, lo que facilita una futura evolución hacia el tiempo real.
+Cuando se invoca una acción, el motor de procesamiento analiza la cadena de transformaciones y construye un \textbf{Grafo Acíclico Dirigido (DAG)} de las operaciones. Este grafo es optimizado y dividido en etapas de tareas que se distribuyen entre los nodos del clúster para su ejecución paralela, permitiendo un procesamiento masivo y eficiente.
 
-\subsection{Virtualización por Contenedores y Orquestación}
-La \textbf{virtualización por contenedores}, implementada con Docker, se basa en aislar procesos a nivel de sistema operativo. A diferencia de las máquinas virtuales tradicionales que virtualizan el hardware completo (incluyendo un sistema operativo invitado), los contenedores comparten el kernel del sistema anfitrión. Esto los hace extremadamente ligeros y rápidos de iniciar.
+\subsection{Transmisión de Vídeo sobre IP}
+La transmisión de vídeo en tiempo real a través de redes IP se basa en protocolos diseñados para manejar datos multimedia con baja latencia. Uno de los protocolos más extendidos para este fin es el \textbf{Protocolo de Mensajería en Tiempo Real (RTMP)}. Desarrollado originalmente para Adobe Flash, RTMP es un protocolo basado en TCP que mantiene una sesión persistente entre cliente y servidor, permitiendo la transmisión fiable de flujos de audio, vídeo y datos.
 
-Cuando una aplicación consta de múltiples contenedores, surge la necesidad de la \textbf{orquestación}, que es la gestión automatizada de estos. He utilizado \textbf{Docker Compose} como orquestador para definir la topología de la aplicación, su red y sus dependencias en un único fichero, simplificando radicalmente su despliegue.
+\section{Conceptos de Seguridad en Comunicaciones Web}
+\subsection{HTTP, HTTPS y el Protocolo SSL/TLS}
+HTTP (Hypertext Transfer Protocol) es el protocolo fundamental de la web, pero transmite la información en texto plano. \textbf{HTTPS} es su versión segura, que añade una capa de cifrado mediante el protocolo \textbf{SSL/TLS} (Secure Sockets Layer/Transport Layer Security) \cite{rescorla2001ssl}. Esta capa utiliza criptografía de clave pública para establecer una conexión segura, garantizando la confidencialidad (nadie puede leer la comunicación) y la integridad (nadie puede modificarla) de los datos.
 
-\section{Tecnologías Fundamentales del Pipeline}
-\label{sec:conceptos_tecnologias}
-
-\subsection{Jitsi y el Protocolo RTMP}
-Jitsi es una colección de proyectos de software libre para construir soluciones de videoconferencia. Su arquitectura se basa en el concepto de \textbf{Unidad de Reenvío Selectivo}, implementado por su componente \textbf{Jitsi Videobridge (JVB)} \cite{JitsiJibriDocs}. Una SFU no mezcla los flujos de vídeo, sino que recibe el flujo de cada participante y lo reenvía de forma selectiva al resto. Esto reduce drásticamente la carga de la CPU en el servidor y es lo que permite a Jitsi ser tan escalable.
-
-Dentro de este ecosistema, \textbf{Jibri} actúa como un cliente especial que se une a la conferencia, lanza un navegador sin interfaz gráfica y utiliza \textbf{FFmpeg} para capturar la vista compuesta y realizar dos acciones posibles:
+\subsection{Certificados Digitales y Autoridades de Certificación}
+Para que HTTPS funcione, el servidor debe presentar un \textbf{certificado digital SSL/TLS} que valide su identidad. Existen dos tipos principales:
 \begin{itemize}
-    \item \textbf{Grabación a fichero:} Genera un archivo MP4, que es el enfoque principal de este TFG.
-    \item \textbf{Transmisión en vivo:} Envía un flujo de vídeo mediante el \textbf{Protocolo de Mensajería en Tiempo Real (RTMP)}. RTMP es un protocolo basado en TCP, desarrollado para la transmisión de audio, vídeo y datos a través de internet con baja latencia. Aunque mi implementación se centra en el procesamiento offline de los MP4, RTMP es importante para la posible evolución del sistema a un análisis en tiempo real.
-\end{itemize}
-
-\subsection{Apache Kafka: Arquitectura de Log Distribuido}
-Kafka \cite{KafkaWebDoc} es una plataforma de streaming de eventos cuya arquitectura se basa en el concepto de un \textbf{log de confirmación distribuido}. Cada tópico es, en esencia, un fichero de registro estructurado e inmutable.
-\begin{itemize}
-    \item \textbf{Particiones y Replicación:} Para lograr escalabilidad y tolerancia a fallos, cada tópico se divide en una o más \textit{particiones}. Cada partición es un log ordenado que puede ser alojado en un servidor diferente. Además, cada partición se replica a través de varios servidores para garantizar la durabilidad.
-    \item \textbf{Offsets:} Cada mensaje en una partición tiene un identificador numérico secuencial único llamado \textit{offset}, que los consumidores usan para saber qué mensajes han procesado.
-    \item \textbf{Coordinación con Zookeeper/KRaft:} Kafka utiliza un sistema de coordinación para gestionar los metadatos del clúster. Tradicionalmente ha sido Apache Zookeeper, aunque las versiones más recientes están migrando a un protocolo propio llamado KRaft.
-\end{itemize}
-
-\subsection{Apache Spark: Modelo de Ejecución y Procesamiento}
-La potencia de Apache Spark reside en su modelo de computación en memoria y su motor de ejecución distribuido \cite{SparkWebDoc}.
-\begin{itemize}
-    \item \textbf{RDD, DataFrames y el Optimizador Catalyst:} La abstracción de datos fundamental en Spark es el \textbf{RDD (Resilient Distributed Dataset)}, una colección de elementos inmutable y distribuida. Sobre esta idea, Spark introdujo los \textbf{DataFrames}, una API de más alto nivel que organiza los datos en columnas con nombre y permite optimizaciones automáticas a través de su motor \textbf{Catalyst}, que traduce las operaciones a un plan de ejecución eficiente.
-    \item \textbf{Transformaciones y Acciones (Ejecución Perezosa):} Las operaciones en Spark se dividen en \textit{transformaciones} (`map`, `filter`) y \textit{acciones} (`count`, `save`). Spark no ejecuta ninguna transformación hasta que se invoca una acción, a esto se le llama \textbf{ejecución perezosa}.
-    \item \textbf{Planificación DAG:} Al llamar a una acción, Spark crea un \textbf{Grafo Acíclico Dirigido (DAG)} de las operaciones a realizar. El planificador de Spark divide este grafo en etapas y tareas que se distribuyen entre los nodos del clúster para su ejecución en paralelo.
+    \item \textbf{Certificados Autofirmados:} Son generados por el propio administrador del servidor. No son emitidos por una entidad de confianza, por lo que los navegadores web los rechazan por defecto, mostrando advertencias de seguridad al usuario.
+    \item \textbf{Certificados de una CA:} Son emitidos por una \textbf{Autoridad de Certificación (CA)}, una entidad externa en la que confían los navegadores (como Let's Encrypt). Cuando un navegador recibe un certificado emitido por una CA de confianza, establece la conexión segura sin advertencias. Por motivos de seguridad, los navegadores modernos exigen una conexión HTTPS con un certificado válido para permitir el acceso a funcionalidades sensibles como la cámara o el micrófono.
 \end{itemize}
 
-\subsubsection{Diseño para la Extensibilidad (Línea Futura)}
-De cara a la futura línea de trabajo sobre un script de análisis personalizable, el diseño de la aplicación Spark debe considerar la extensibilidad. Para ello, podría aplicar patrones de diseño de software como el \textbf{Strategy Pattern}, que permitiría definir una familia de algoritmos de análisis (uno para contar objetos, otro para detectar movimiento) y hacerlos intercambiables. La elección del algoritmo a ejecutar podría dictarse mediante un fichero de configuración externo, siguiendo el principio de \textbf{Configuration as Code}, lo que dotaría al sistema de una gran flexibilidad.
+\section{Componentes Conceptuales de un Pipeline de Datos}
+\label{sec:conceptos_pipeline}
 
-\subsection{Python y OpenCV: El Ecosistema de Análisis}
-Mientras que Spark es el motor que distribuye las tareas, la lógica concreta del análisis de vídeo la he implementado utilizando el ecosistema de Python.
+Toda arquitectura de procesamiento de datos, como la que se aborda en este proyecto, puede descomponerse en una serie de componentes lógicos, cada uno con una responsabilidad bien definida. La comprensión de estos roles es fundamental para diseñar un sistema robusto y escalable.
+
+\subsection{El Productor de Eventos (\textit{Producer})}
+El \textbf{Productor} es cualquier entidad del sistema cuya función principal es originar o capturar datos y enviarlos a un sistema de mensajería. Este componente actúa como la fuente de información del pipeline. En el contexto de un sistema de análisis de vídeo, el rol del productor sería desempeñado por el sistema de captura, encargado de digitalizar la sesión y publicarla como un evento o una serie de eventos en el flujo de datos.
+
+\subsection{El Intermediario de Mensajería (\textit{Broker})}
+El \textbf{Broker} es el servidor o conjunto de servidores que forman el núcleo del sistema de mensajería. Su responsabilidad es recibir los eventos de los productores, almacenarlos de forma duradera y fiable, y ponerlos a disposición de los consumidores. En arquitecturas distribuidas, se despliega un clúster de brokers para garantizar la alta disponibilidad y la tolerancia a fallos. Este componente es esencial para desacoplar a los productores de los consumidores, permitiendo que operen a ritmos diferentes y de forma independiente.
+
+\subsection{El Consumidor y Procesador de Datos (\textit{Consumer}/\textit{Processor})}
+El \textbf{Consumidor} es la aplicación que se suscribe al sistema de mensajería para recibir y leer los eventos que le interesan. Una vez que un consumidor recibe un evento, se lo entrega a una lógica de \textbf{Procesamiento}, que es donde reside la inteligencia de la aplicación. Esta lógica es la que se encarga de transformar, analizar o actuar sobre los datos recibidos. En un sistema de procesamiento de vídeo, el consumidor se encargaría de recibir los datos del vídeo, y el procesador aplicaría los algoritmos de visión artificial sobre ellos.
+
+\subsection{El Modelo de Computación Maestro-Trabajador (\textit{Master-Worker})}
+Para procesar grandes volúmenes de datos de manera eficiente, los \textit{frameworks} de computación distribuida suelen emplear el patrón arquitectónico \textbf{Maestro-Trabajador} (conocido también como \textit{Driver-Executor}).
 \begin{itemize}
-    \item \textbf{PySpark:} Es la API de Python para Spark. La he utilizado como "pegamento" para definir las transformaciones sobre los datos y enviar el código de procesamiento a los nodos del clúster. Su uso me permite combinar la potencia de Spark con la simplicidad y la vasta cantidad de librerías de Python.
-    \item \textbf{OpenCV (Open Source Computer Vision Library):} Es la librería de facto para tareas de visión por computador \cite{opencv_library}. Dentro de mi script de PySpark, utilizaré OpenCV para realizar las operaciones sobre los fotogramas de vídeo, como la lectura de los archivos MP4, la manipulación de imágenes y la aplicación de algoritmos para la extracción de características.
+    \item El nodo \textbf{Maestro} (\textit{Master} o \textit{Driver}) es el cerebro de la operación. Recibe el trabajo a realizar, lo divide en un conjunto de tareas más pequeñas e independientes, y las distribuye entre los nodos trabajadores. También se encarga de coordinar la ejecución y agregar los resultados finales.
+    \item Los nodos \textbf{Trabajadores} (\textit{Workers} o \textit{Executors}) son los que realizan el trabajo pesado. Cada trabajador recibe una o más tareas del maestro, las ejecuta en paralelo con otros trabajadores sobre una porción de los datos, y devuelve el resultado al maestro.
 \end{itemize}
-
-\section{Conceptos de Red y Seguridad Aplicados}
-\label{sec:conceptos_red_seguridad}
-Durante el despliegue de Jitsi, surgieron importantes desafíos relacionados con la red y la seguridad. Esta experiencia de depuración es una parte fundamental del trabajo de este TFG.
-
-\subsection{Comunicación Segura: HTTP vs. HTTPS}
-HTTP es el protocolo fundamental de la web, pero transmite los datos en texto plano. \textbf{HTTPS} es su versión segura, que utiliza un cifrado \textbf{SSL/TLS} para proteger la comunicación. La relevancia para este proyecto es crítica: los navegadores web modernos solo conceden permisos de acceso a cámara y micrófono a páginas servidas bajo HTTPS, lo que me obligó a intentar implementar esta configuración en mi entorno de desarrollo.
-
-\subsection{Certificados SSL/TLS: Autofirmados vs. Let's Encrypt}
-Un certificado SSL/TLS valida la identidad de un servidor.
-\begin{itemize}
-    \item \textbf{Certificados Autofirmados:} Son certificados que generé yo mismo para las pruebas iniciales. Los navegadores no confían en ellos, lo que provoca errores de seguridad que impiden el acceso a los permisos de medios y dificulta el despliegue.
-    \item \textbf{Certificados de una CA (Let's Encrypt):} Una Autoridad de Certificación (CA) es una entidad de confianza. \textbf{Let's Encrypt} \cite{letsencrypt_org} es una CA gratuita y automatizada cuyos certificados son aceptados por todos los navegadores. La estrategia final y correcta para la implementación de HTTPS en Jitsi se basa en utilizar Let's Encrypt.
-\end{itemize}
-
-\subsection{Resolución de Nombres en Desarrollo: El fichero \texttt{/etc/hosts}}
-Para el desarrollo local, el fichero \texttt{/etc/hosts} me ha permitido simular nombres de dominio (como \texttt{jitsi.localhost}) y asociarlos a mi máquina local (\texttt{127.0.0.1}), un paso necesario para la correcta configuración interna de los servicios de Jitsi sin depender de un servidor DNS público.
