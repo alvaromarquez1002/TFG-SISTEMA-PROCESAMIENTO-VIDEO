@@ -31,7 +31,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 <table>
   <tr>
     <td align="center">
-      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la Arquitectura General del Sistema" width="800px">
+      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la Arquitectura General del Sistema" width="500px">
     </td>
   </tr>
 </table>
@@ -113,7 +113,7 @@ Esta fase pone en marcha el servidor de videoconferencias y el servicio de graba
 <table>
   <tr>
     <td align="center">
-      <img src="./doc/images/jitsi-funcional.png" alt="Jitsi funcional captura" width="600px">
+      <img src="./doc/images/jitsi-funcional.png" alt="Jitsi funcional captura" width="400px">
     </td>
   </tr>
 </table>
