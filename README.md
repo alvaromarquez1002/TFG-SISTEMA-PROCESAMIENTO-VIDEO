@@ -9,7 +9,6 @@ Tutores: D. José Miguel Ramírez Sanz y D. José Luís Garrido Labrador
 ---
 
 ## Resumen
-Resumen
 En el contexto tecnológico actual, la generación de datos de vídeo ha crecido de forma exponencial, creando la necesidad de desarrollar sistemas robustos, escalables y eficientes para su procesamiento. Este proyecto aborda dicho desafío mediante el diseño y la implementación de una infraestructura de software completa y de extremo a extremo, desde la captura del vídeo hasta su análisis.
 
 El sistema utiliza Jitsi Meet como plataforma de videoconferencia y su componente Jibri para la grabación de las sesiones, generando los ficheros de vídeo fuente. Para la ingesta y el procesamiento, se ha desplegado un pipeline de datos que utiliza Apache Kafka como broker de mensajería en su modo moderno KRaft y un clúster de Apache Spark para la computación distribuida. Toda la arquitectura, compuesta por más de siete servicios independientes, se ha desplegado y orquestado mediante Docker y Docker Compose, garantizando la reproducibilidad y portabilidad del entorno.
