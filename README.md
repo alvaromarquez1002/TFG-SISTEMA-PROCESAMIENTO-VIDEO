@@ -28,7 +28,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 
 ## Diagrama de Arquitectura General
 
-![Diagrama de la Arquitectura General del Sistema](./doc/diagrams/images/arquitectura-general.svg)
+![Diagrama de la Arquitectura General del Sistema](./doc/diagrams/arquitectura-general.svg)
 
 ---
 
