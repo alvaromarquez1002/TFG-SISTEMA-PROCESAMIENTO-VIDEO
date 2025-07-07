@@ -67,10 +67,22 @@ Antes de empezar, el sistema anfitrión (host) debe cumplir los siguientes requi
     ```bash
     sudo apt install v4l2loopback-dkms
     ```
-4.  **Configuración de Red (para acceso externo a Jitsi):**
-    * Un **nombre de dominio público** apuntando a tu IP pública (este proyecto usó [DuckDNS](https://www.duckdns.org/)).
-    * **Redirección de Puertos (Port Forwarding)** en tu router: El tráfico de los puertos `80 (TCP)` y `443 (TCP)` debe ser redirigido a la IP local de tu máquina Debian.
-    * **(Recomendado)** Asignar una IP local estática a la máquina Debian en el router (Reserva de DHCP) para evitar modificaciones en cada sesion.
+#### Fase 0.1: Configuración de Red para Acceso Externo (DuckDNS y Router)
+
+> **Nota:** Esta fase es indispensable para que Jitsi sea accesible desde internet y para que Let's Encrypt pueda generar los certificados SSL.
+
+1.  **Obtener un Dominio Público con DuckDNS:**
+    * Ve a [www.duckdns.org](https://www.duckdns.org) y regístrate usando una de las opciones disponibles (Google, GitHub, etc.).
+    * En tu panel de control, crea un subdominio gratuito (ej. `mi-tfg-jitsi`). Tu dominio público será `mi-tfg-jitsi.duckdns.org`.
+    * DuckDNS se encargará de que este dominio siempre apunte a la dirección IP pública de tu red.
+
+2.  **Configurar la Redirección de Puertos (Port Forwarding) en tu Router:**
+    * Accede al panel de administración de tu router (normalmente en `192.168.1.1`).
+    * Busca la sección "Port Forwarding" o "Redirección de Puertos".
+    * **(Recomendado)** Asigna una IP local estática a tu máquina Debian (ej. `192.168.1.100`) mediante la opción de "Reserva de DHCP".
+    * Crea dos nuevas reglas para redirigir el tráfico de internet a tu máquina Debian:
+        * **Regla 1 (HTTP):** Puerto Externo `80` (TCP) -> IP Interna `192.168.1.100` : Puerto Interno `80`.
+        * **Regla 2 (HTTPS):** Puerto Externo `443` (TCP) -> IP Interna `192.168.1.100` : Puerto Interno `443`.
 
 ### Fase 1: Despliegue del Sistema de Captura (Jitsi)
 
