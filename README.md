@@ -27,7 +27,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 
 ## Diagrama de Arquitectura General
 
-<img src="./docs/images/diagrama-vertical.svg" alt="Mi Diagrama Vertical" height="500">
+<img src="./docs/images/arquitectura-general.svg" alt="Mi Diagrama Vertical" height="500">
 
 ---
 
