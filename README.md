@@ -30,7 +30,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 <table>
   <tr>
     <td align="center">
-      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la Arquitectura General del Sistema" width="500px">
+      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la Arquitectura General del Sistema" height=0.6>
     </td>
   </tr>
 </table>
