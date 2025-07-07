@@ -42,6 +42,13 @@ La transmisión de vídeo en tiempo real a través de redes IP se basa en protoc
 \subsection{HTTP, HTTPS y el Protocolo SSL/TLS}
 HTTP (Hypertext Transfer Protocol) es el protocolo fundamental de la web, pero transmite la información en texto plano. \textbf{HTTPS} es su versión segura, que añade una capa de cifrado mediante el protocolo \textbf{SSL/TLS} (Secure Sockets Layer/Transport Layer Security) \cite{rescorla2001ssl}. Esta capa utiliza criptografía de clave pública para establecer una conexión segura, garantizando la confidencialidad (nadie puede leer la comunicación) y la integridad (nadie puede modificarla) de los datos.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/ArquitecturadeRedparaelDesplieguedeJitsi.jpg}
+    \caption{Arquitectura de red implementada para permitir el acceso externo seguro vía HTTPS y la validación de certificados de Let's Encrypt.}
+    \label{fig:arquitectura_red_letsencrypt}
+\end{figure}
+
 \subsection{Certificados Digitales y Autoridades de Certificación}
 Para que HTTPS funcione, el servidor debe presentar un \textbf{certificado digital SSL/TLS} que valide su identidad. Existen dos tipos principales:
 \begin{itemize}
@@ -51,8 +58,13 @@ Para que HTTPS funcione, el servidor debe presentar un \textbf{certificado digit
 
 \section{Componentes Conceptuales de un Pipeline de Datos}
 \label{sec:conceptos_pipeline}
-
 Toda arquitectura de procesamiento de datos, como la que se aborda en este proyecto, puede descomponerse en una serie de componentes lógicos, cada uno con una responsabilidad bien definida. La comprensión de estos roles es fundamental para diseñar un sistema robusto y escalable.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.9\textheight]{img/arquitectura-general.jpg}
+    \caption{Visión general de la arquitectura del sistema, mostrando la interacción entre el subsistema de captura (Jitsi) y el pipeline de procesamiento (Kafka/Spark).}
+    \label{fig:arquitectura_completa}
+\end{figure}
 
 \subsection{El Productor de Eventos (\textit{Producer})}
 El \textbf{Productor} es cualquier entidad del sistema cuya función principal es originar o capturar datos y enviarlos a un sistema de mensajería. Este componente actúa como la fuente de información del pipeline. En el contexto de un sistema de análisis de vídeo, el rol del productor sería desempeñado por el sistema de captura, encargado de digitalizar la sesión y publicarla como un evento o una serie de eventos en el flujo de datos.

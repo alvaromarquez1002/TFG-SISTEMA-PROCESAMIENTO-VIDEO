@@ -21,6 +21,13 @@ Desde el principio, se conocia la complejidad de un sistema de procesamiento en 
 \label{sec:desarrollo_acto1}
 El primer intento de despliegue se realizó sobre el sistema de desarrollo principal: un sistema Windows 11 con el Subsistema de Windows para Linux (WSL2) y Docker Desktop. Aunque este entorno es muy versátil, la interacción entre el sistema de archivos de Windows (NTFS) y los permisos de Linux dentro de los contenedores demostró ser la fuente de problemas complejos y bloqueantes.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/wsl2error.png}
+    \caption{Ejemplo de algun error que surgio en esta fase wsl 2}
+    \label{fig:Error WSL2}
+\end{figure}
+
 \subsection{Primer Despliegue de Jitsi y Análisis de Errores Críticos}
 Tras clonar el repositorio de \texttt{docker-jitsi-meet} y configurar el fichero \texttt{.env}, el primer intento de levantar la pila de servicios con \texttt{docker-compose up} resultó en un fallo en cascada. Dos componentes clave, Prosody y Jibri, fallaban sistemáticamente.
 
@@ -59,6 +66,13 @@ Para solucionar el problema de conexión, se realizo un proceso de diagnóstico 
 \subsubsection{Diagnóstico del Protocolo de Conexión (WSS)}
 El primer hallazgo importante se obtuvo al inspeccionar la consola de desarrollador del navegador. Esto revelo que, a pesar de que la instancia estaba configurada para HTTP, el cliente web intentaba establecer una conexión segura mediante el protocolo WebSocket Secure (WSS). Esto fallaba porque el servidor no tenía configurado ningún certificado SSL/TLS. La solución pasaba por forzar al cliente a utilizar una conexión no segura.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/errorconexion.png}
+    \caption{Error de conexión inicial encontrado en el despliegue de Jitsi sobre Debian, a pesar de que los contenedores estaban en ejecución.}
+    \label{fig:error_conexion_debian}
+\end{figure}
+
 \subsubsection{Solución y Error de Montaje: \texttt{custom.config.js}}
 La documentación de Jitsi indica que se puede sobreescribir la configuración del cliente web mediante un archivo \texttt{custom.config.js}. Se decidió crear este archivo con el objetivo de deshabilitar la conexión segura. Sin embargo, al volver a lanzar los contenedores, el servicio web falló con un nuevo error: \texttt{...not a directory}. El problema era que Docker, al intentar montar el archivo de configuración en un volumen, se encontraba con que el directorio de destino ya había sido creado por el script de inicio del contenedor. La solución fue asegurar la creacion de la estructura de directorios y el fichero \texttt{custom.config.js} en la carpeta de configuración del host (\texttt{\textasciitilde{}/.jitsi-meet-cfg/web/}) antes de ejecutar \texttt{docker-compose up} por primera vez.
 
@@ -71,9 +85,30 @@ Con el sistema funcionando en HTTP, y siguiendo las recomendaciones de los tutor
     \item \textbf{Intento con Certificados Autofirmados:} El primer enfoque fue utilizar certificados autofirmados generados con la herramienta \texttt{mkcert}. Sin embargo, esto genero retroceder a un problema similar al de WSL2: el contenedor web de Jitsi (Nginx) no era capaz de leer o utilizar correctamente los certificados montados, provocando errores de SSL en el navegador.
     
     \item \textbf{Diagnóstico con OpenSSL:} Para diagnosticar el problema de forma precisa, se utilizo la herramienta de línea de comandos \texttt{openssl s\_client} para conectarme directamente al puerto 443 del servidor. El análisis confirmó que el servidor no estaba presentando el certificado que le había proporcionado, sino uno por defecto, lo que indicaba un fallo en la configuración de Nginx o en cómo Docker montaba los certificados. La herramienta \texttt{openssl s\_client} fue fundamental para este diagnóstico \cite{openssl_docs}.
+
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/duckdns.png}
+    \caption{Panel de configuración de DuckDNS, donde se asocia un subdominio público a la dirección IP de la red local.}
+    \label{fig:config_duckdns}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/routerconfig.png}
+    \caption{Ejemplo de la configuración de redirección de puertos (Port Forwarding) necesaria para Jitsi y Let's Encrypt.}
+    \label{fig:port_forwarding}
+\end{figure}
     
     \item \textbf{Estrategia Definitiva (Let's Encrypt):} Basado en esta experiencia y en las indicaciones de los tutores, la estrategia actual y definitiva del proyecto es implementar HTTPS utilizando certificados válidos emitidos por una autoridad de certificación reconocida como \textbf{Let's Encrypt}. Este enfoque, aunque requiere un dominio público, garantiza una solución estándar, robusta y confiable, eliminando todos los problemas de confianza del navegador. Las tareas técnicas asociadas a esta implementación forman parte de la fase final del proyecto.
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/letsencrypt.png}
+    \caption{Ejemplo de funcionamiento Let's Encrypt.}
+    \label{fig:Let's Encrypt}
+\end{figure}
 
 \section{Fase III: Consolidación de la Infraestructura}
 \label{sec:desarrollo_acto_final}
@@ -91,6 +126,13 @@ La estrategia de utilizar certificados autofirmados se demostró inviable. Por e
 
 Una vez configurado el entorno de red, bastó con habilitar las variables correspondientes en el fichero \texttt{.env} de Jitsi. Al levantar los contenedores, los \textit{logs} del servicio web mostraron el proceso exitoso de validación y obtención del certificado, resultando en una instancia de Jitsi plenamente funcional y accesible a través de HTTPS con un certificado de confianza.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.6\textheight]{img/entrarreunion.jpg}
+    \caption{Captura de la sala de entrada a la reunión de Jitsi sin errores}
+    \label{fig: Sala entrada reunion jitsi}
+\end{figure}
+
 \subsection{Resolución de Desafíos Finales en Jibri}
 Con la plataforma Jitsi estable, se realizaron las primeras pruebas de grabación con Jibri, que revelaron dos problemas finales:
 \begin{enumerate}
@@ -107,7 +149,19 @@ Con el sistema de captura de vídeo completamente funcional, el último paso fue
     \item \textbf{Prueba de Concepto y Validación End-to-End:} Se realizó una prueba completa del sistema. Una sesión de vídeo fue grabada con Jitsi, y el archivo MP4 resultante fue colocado en el directorio \texttt{/data}. A continuación, se ejecutó el \textit{pipeline} de procesamiento. El análisis de los \textit{logs} de la aplicación demostró que el \textit{script} localizó el vídeo, lo procesó aplicando la transformación de inversión de color, guardó el nuevo vídeo en la carpeta \texttt{/data/processed} y finalmente archivó el vídeo original. Este exitoso resultado validó la arquitectura completa y el correcto funcionamiento de todos los componentes integrados.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/logsfinalpy.png}
+    \caption{Captura donde se aprecia todos los contenedores funcionales y el script sin errores.}
+    \label{fig:Logs Conexion completa sin errores}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/resultado-procesamiento.png}
+    \caption{Captura donde se aprecia el video ya procesado mediante la transformación de color.}
+    \label{fig:Captura video ya procesado}
+\end{figure}
+
 \subsection{Incorporación de Recursos Visuales}
 Para mejorar la comprensión de la arquitectura y el flujo de trabajo descritos en este capítulo, se ha creado un conjunto de diagramas que se pueden encontrar en el Apéndice De Diseño. Estos recursos visuales incluyen un diagrama de la arquitectura general del sistema, un diagrama del pipeline de datos y un diagrama de despliegue de los contenedores Docker, entre otros. Estos elementos son fundamentales para clarificar las complejas interacciones entre los distintos componentes del sistema.
-
-%  falta anadir FIGURAS, CAPS, DIAGRAMAS...

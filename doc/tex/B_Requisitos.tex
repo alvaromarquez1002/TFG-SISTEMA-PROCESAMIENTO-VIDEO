@@ -5,7 +5,7 @@
 En este anexo se detallan los requisitos que debe cumplir el sistema desarrollado en este Trabajo de Fin de Grado. Se presentarán los objetivos generales del proyecto, un catálogo de requisitos funcionales y no funcionales que definen el comportamiento y las cualidades de la infraestructura, los actores que interactúan con el sistema y los principales casos de uso.
 
 \section{Objetivos Generales del Proyecto}
-Como se detalló en el Capítulo \ref{chap:objetivos}, el objetivo principal de este TFG es el \textbf{diseño e implementación de una infraestructura de backend robusta, escalable y tolerante a fallos} para un sistema de procesamiento de vídeo. El propósito es crear una base sólida que permita la captura, transporte y análisis de sesiones de telerehabilitación, superando las limitaciones del sistema predecesor.
+Como se detalló en el Capítulo 2, el objetivo principal de este TFG es el \textbf{diseño e implementación de una infraestructura de backend robusta, escalable y tolerante a fallos} para un sistema de procesamiento de vídeo. El propósito es crear una base sólida que permita la captura, transporte y análisis de sesiones de telerehabilitación, superando las limitaciones del sistema predecesor.
 
 \section{Catálogo de Requisitos}
 A continuación, se presenta un catálogo detallado de los requisitos que debe satisfacer el sistema.
@@ -94,6 +94,13 @@ Aunque gran parte de este proyecto se centra en la infraestructura de \textit{ba
     \item \emph{Administrador del Sistema:} Es el usuario técnico responsable de desplegar, gestionar y supervisar la infraestructura. Aunque no participa en la sesión, es quien asegura que el sistema esté operativo y quien podría acceder a los resultados del procesamiento para su validación.
 \end{enumerate}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/Diagramacasodeuso.jpg}
+    \caption{Diagrama de los principales casos de uso del sistema.}
+    \label{fig:anexob_actores}
+\end{figure}
+
 \section{Catálogo de Requisitos Funcionales}
 \label{sec:requisitos_funcionales}
 A continuación, se detallan los requisitos funcionales del sistema, descritos como un flujo de trabajo lógico desde la perspectiva de los actores.
@@ -169,7 +176,7 @@ En este apartado se van a mostrar, por una parte el diagrama de caso de uso, com
 \begin{figure}[H]
  \centering
 \subfloat{
-    \includegraphics[width=\textwidth]{doc/img/Diagramadecasouso.svg}}
+    \includegraphics[width=\textwidth]{img/Diagramacasodeuso.jpg}}
  \caption{Diagrama de casos de uso.}
  \label{f:casoUso}
 \end{figure}

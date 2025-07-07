@@ -12,6 +12,20 @@ Python es un lenguaje de programación de alto nivel, interpretado y multiparadi
 \subsection{Jira y Metodología Ágil}
 Jira es una herramienta de software desarrollada por Atlassian para el seguimiento de incidencias y la gestión de proyectos \cite{atlassian_jira}. Está diseñada para dar soporte a metodologías de desarrollo ágil como Scrum, que se basa en la organización del trabajo en iteraciones cortas denominadas Sprints. Jira facilita la gestión de un \textit{backlog} de tareas, la planificación de Sprints y la visualización del flujo de trabajo mediante tableros Kanban.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/jira.png}
+    \caption{Ejemplo del tablero Kanban utilizado en Jira para el seguimiento de las tareas del Sprint.}
+    \label{fig:tablero_jira}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/jira (2).png}
+    \caption{Ejemplo del tablero Kanban utilizado en Jira para el seguimiento de las tareas del Sprint.}
+    \label{fig: Jira ejemplo doc}
+\end{figure}
+
 \section{Infraestructura y Pipeline de Datos}
 \label{sec:herramientas_infraestructura}
 El núcleo del proyecto reside en la infraestructura diseñada para capturar, transportar y procesar los datos de vídeo.
@@ -31,6 +45,13 @@ Jitsi es una colección de proyectos de software libre para construir soluciones
     \item \textbf{Jibri (Jitsi Broadcasting Infrastructure):} Es el componente utilizado en este TFG para la captura de datos. Jibri es un servicio que se une a una conferencia como un participante silencioso, lanza una instancia de un navegador Chrome en un servidor virtual (\textit{headless}) y utiliza FFmpeg para capturar y grabar la vista compuesta de la conferencia en un archivo de vídeo estándar (formato MP4).
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/jitsimeet.png}
+    \caption{Contenedores levantados para videoconferencia Jitsi.}
+    \label{fig:Jitsi meet contenedores}
+\end{figure}
+
 \subsection{Plataformas de Big Data: Kafka y Spark}
 \subsubsection{Apache Kafka: Un Log de Transacciones Distribuido}
 Apache Kafka es una plataforma distribuida de código abierto para la transmisión de eventos (\textit{event streaming}) \cite{KafkaWebDoc}. Aunque a menudo se utiliza como un sistema de mensajería publicar-suscribir, su arquitectura fundamental es la de un \textbf{log de transacciones distribuido, particionado y replicado}. Los conceptos clave de su arquitectura son:
@@ -41,6 +62,13 @@ Apache Kafka es una plataforma distribuida de código abierto para la transmisi�
     \item \textbf{Modo KRaft (sin Zookeeper):} Las versiones modernas de Kafka, como la utilizada en este proyecto, pueden operar en modo KRaft (Kafka Raft). En este modo, Kafka utiliza un protocolo de consenso interno para gestionar los metadatos del clúster, eliminando la necesidad de un sistema de coordinación externo como Apache Zookeeper y simplificando así significativamente la arquitectura de despliegue.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/montarsparkkafka.png}
+    \caption{Contenedores de Spark y Kafka iniciandose}
+    \label{fig:MontajeSparkKafka}
+\end{figure}
+
 \subsubsection{Apache Spark: Un Motor de Computación Distribuida}
 Apache Spark es un motor de análisis unificado para el procesamiento de datos a gran escala \cite{SparkWebDoc}. Su principal característica es su capacidad para realizar computación distribuida en memoria, lo que le permite alcanzar un alto rendimiento. Su arquitectura se compone de:
 \begin{itemize}
@@ -48,3 +76,4 @@ Apache Spark es un motor de análisis unificado para el procesamiento de datos a
     \item \textbf{DataFrames y el Optimizador Catalyst:} La API principal de Spark es el DataFrame, una abstracción de datos distribuidos organizados en columnas con nombre. Cuando se ejecutan operaciones sobre un \textit{DataFrame}, el optimizador de Spark, llamado \textbf{Catalyst}, traduce estas operaciones a un plan lógico, lo optimiza y genera un plan físico de ejecución que se distribuye por el clúster.
     \item \textbf{PySpark:} Es la API de Python para Spark, que permite a los desarrolladores utilizar la potencia de Spark con la simplicidad y el amplio ecosistema de librerías de Python.
 \end{itemize}
+
