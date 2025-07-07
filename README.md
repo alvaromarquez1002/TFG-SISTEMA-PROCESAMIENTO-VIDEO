@@ -30,7 +30,7 @@ The project culminates in a functional proof of concept that demonstrates the pi
 <table>
   <tr>
     <td align="center">
-      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la arquitectura general del TFG" height="700">
+      <img src="./doc/images/arquitectura-general.svg" alt="Diagrama de la arquitectura general del TFG" height="850">
     </td>
   </tr>
 </table>
